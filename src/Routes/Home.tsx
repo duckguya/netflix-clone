@@ -55,6 +55,25 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   background-size: cover;
   background-position: center center;
   height: 200px;
+  &:first-child {
+    transform-origin: left center;
+  }
+  &:last-child {
+    transform-origin: right center;
+  }
+`;
+
+const Info = styled(motion.div)`
+  padding: 10px;
+  background-color: ${(props) => props.theme.black.lighter};
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  h4 {
+    text-align: center;
+    font-size: 18px;
+  }
 `;
 
 const rowVariants = {
@@ -66,6 +85,32 @@ const rowVariants = {
   },
   exit: {
     x: -window.outerWidth,
+  },
+};
+
+const BoxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    y: -50,
+    transition: {
+      delay: 0.5,
+      duration: 0.3,
+      type: "tween",
+    },
+  },
+};
+
+const InfoVariants = {
+  hover: {
+    opacity: 1,
+    transition: {
+      delay: 0.5,
+      duration: 0.3,
+      type: "tween",
+    },
   },
 };
 
@@ -81,6 +126,14 @@ function Home() {
   const [leaving, setLeaving] = useState(false);
 
   // 슬라이드 다음 버튼을 연속으로 눌렀을 때 animation이 반복되면서 발생하는 버그를 막는다.
+  //   increaseIndex함수가 실행되면
+  // leaving이 false로 들어와서 if문을 통과하고
+  // 1. toggleLeaving함수가 실행된다.
+  // 2.toggleLeaving함수는 setLeaving을 true로 바꾼다.
+  // 3.setIndex를 +1시킨다.
+  // 4.setIndex가 실행되면 animation이 실행된다.
+  // 5.animation이 실행되고 exit가 끝나면 onExitCompete에 걸려있던 toggleLeaving이 한 번 더 실행되면서 false로 바뀐다.
+
   const increaseIndex = () => {
     if (data) {
       if (leaving) return;
@@ -126,8 +179,17 @@ function Home() {
                   .map((movie) => (
                     <Box
                       key={movie.id}
+                      variants={BoxVariants}
+                      initial="normal"
+                      whileHover="hover"
+                      transition={{ type: "tween" }}
                       bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-                    />
+                    >
+                      <Info variants={InfoVariants}>
+                        <h4>{movie.title}</h4>
+                      </Info>
+                    </Box>
+                    // 부모 element에 variants를 가지고있으면 자식요소도 갖게된다.
                   ))}
               </Row>
             </AnimatePresence>
