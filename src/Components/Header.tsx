@@ -106,6 +106,7 @@ const navVariants = {
 function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const homeMatch = useMatch("/");
+  const homeMatch2 = useMatch("/netflix-clone");
   const tvMatch = useMatch("/tv");
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
@@ -156,7 +157,8 @@ function Header() {
         <Items>
           <Item>
             <Link to="/">
-              Home {homeMatch ? <Circle layoutId="circle" /> : null}
+              Home{" "}
+              {homeMatch || homeMatch2 ? <Circle layoutId="circle" /> : null}
             </Link>
           </Item>
           <Item>
