@@ -55,7 +55,7 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   background-image: url(${(props) => props.bgphoto});
   background-size: cover;
   background-position: center center;
-  height: 200px;
+  height: 12rem;
   cursor: pointer;
   &:first-child {
     transform-origin: left center;
@@ -63,6 +63,38 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   &:last-child {
     transform-origin: right center;
   }
+  @media screen and (max-width: 1200px) {
+    height: 7rem;
+  }
+`;
+
+const BtnOverlay = styled(motion.div)`
+  position: absolute;
+  height: 100%;
+  /* background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)); */
+  /* right: 0; */
+  padding: 0px 20px;
+  display: flex;
+  align-items: center;
+  height: 12rem;
+  overflow: hidden;
+  cursor: pointer;
+  @media screen and (max-width: 1200px) {
+    height: 7rem;
+  }
+`;
+
+const BtnOverlayBack = styled(BtnOverlay)`
+  background: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
+  left: 0;
+`;
+const BtnOverlayForward = styled(BtnOverlay)`
+  background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
+  right: 0;
+`;
+
+const ArrowBtn = styled(motion.div)`
+  color: ${(props) => props.theme.white.darker};
 `;
 
 const Info = styled(motion.div)`
@@ -70,7 +102,7 @@ const Info = styled(motion.div)`
   background-color: ${(props) => props.theme.black.lighter};
   opacity: 0;
   position: absolute;
-  width: 100%;
+  /* width: 100%; */
   bottom: 0;
   h4 {
     text-align: center;
@@ -157,6 +189,33 @@ const InfoVariants = {
   },
 };
 
+const BtnOverlayForwardVariants = {
+  hover: {
+    background:
+      "linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))",
+    transition: {
+      type: "tween",
+    },
+  },
+};
+const BtnOverlayBackVariants = {
+  hover: {
+    background:
+      "linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))",
+    transition: {
+      type: "tween",
+    },
+  },
+};
+const BtnVariants = {
+  hover: {
+    scale: 1.2,
+    transition: {
+      type: "tween",
+    },
+  },
+};
+
 const offset = 6;
 
 function Home() {
@@ -213,10 +272,7 @@ function Home() {
         <Loader>Loading...</Loader>
       ) : (
         <>
-          <Banner
-            onClick={increaseIndex}
-            bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}
-          >
+          <Banner bgPhoto={makeImagePath(data?.results[0].backdrop_path || "")}>
             <Title>{data?.results[0].title}</Title>
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
@@ -249,9 +305,36 @@ function Home() {
                         <h4>{movie.title}</h4>
                       </Info>
                     </Box>
+
                     // 부모 element에 variants를 가지고있으면 자식요소도 갖게된다.
                   ))}
               </Row>
+              <BtnOverlayBack
+                onClick={increaseIndex}
+                variants={BtnOverlayBackVariants}
+                whileHover="hover"
+              >
+                <ArrowBtn
+                  className="material-icons"
+                  variants={BtnVariants}
+                  whileHover="hover"
+                >
+                  arrow_back_ios
+                </ArrowBtn>
+              </BtnOverlayBack>
+              <BtnOverlayForward
+                onClick={increaseIndex}
+                variants={BtnOverlayForwardVariants}
+                whileHover="hover"
+              >
+                <ArrowBtn
+                  className="material-icons"
+                  variants={BtnVariants}
+                  whileHover="hover"
+                >
+                  arrow_forward_ios
+                </ArrowBtn>
+              </BtnOverlayForward>
             </AnimatePresence>
           </Slider>
           <AnimatePresence>

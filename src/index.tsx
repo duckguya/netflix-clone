@@ -72,8 +72,11 @@ body {
   color:${(props) => props.theme.white.darker};
   background-color: ${(props) => props.theme.black.veryDark};
   line-height: 1.2;
-  
+  overflow-x:hidden // 가로 스크롤바 없애기
 }
+/* body::-webkit-scrollbar {
+    display: none;
+} */
 a {
   text-decoration:none;
   color:inherit;
