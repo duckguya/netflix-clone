@@ -16,8 +16,14 @@ export interface IGetMoviesResult {
   total_results: number;
 }
 
-export function getMovies() {
+export function getNowPlaying() {
   return fetch(
     `${BASE_PATH}/movie/now_playing?api_key=${process.env.REACT_APP_API_KEY}`
+  ).then((response) => response.json());
+}
+
+export function getUpcoming() {
+  return fetch(
+    `${BASE_PATH}/movie/upcoming?api_key=${process.env.REACT_APP_API_KEY}`
   ).then((response) => response.json());
 }

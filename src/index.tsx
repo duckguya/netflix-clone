@@ -71,6 +71,7 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
   color:${(props) => props.theme.white.darker};
   background-color: ${(props) => props.theme.black.veryDark};
+  /* background-color: black; */
   line-height: 1.2;
   overflow-x:hidden // 가로 스크롤바 없애기
 }

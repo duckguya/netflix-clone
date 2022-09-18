@@ -14,6 +14,7 @@ const Nav = styled(motion.nav)`
   font-size: 12px;
   padding: 20px 60px;
   color: white;
+  z-index: 99;
 `;
 
 const Col = styled.div`
@@ -100,7 +101,7 @@ const navVariants = {
     backgroundColor: "rgba(0,0,0,0)",
   },
   scroll: {
-    backgroundColor: "rgba(0,0,0,1)",
+    backgroundColor: "#141414",
   },
 };
 
