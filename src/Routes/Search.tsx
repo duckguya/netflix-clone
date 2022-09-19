@@ -23,6 +23,7 @@ const Wrapper = styled.div`
   /* position: relative; */
   /* top: -100px; */
   /* margin: 4.5rem; */
+  width: 100%;
 `;
 
 const TitleType = styled.p`
@@ -40,7 +41,7 @@ const Loader = styled.div`
   align-items: center;
 `;
 const Space = styled.div`
-  margin: 5rem 0;
+  margin: 3rem 0;
 `;
 
 function Search() {
@@ -56,7 +57,6 @@ function Search() {
     () => getTvSearch(keyword || "")
   );
 
-  console.log(movies);
   return (
     <Wrapper>
       {moviesLoading ? (

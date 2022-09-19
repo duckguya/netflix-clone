@@ -75,7 +75,7 @@ const Info = styled(motion.div)`
   background-color: ${(props) => props.theme.black.lighter};
   opacity: 0;
   position: absolute;
-  /* width: 100%; */
+  width: 100%;
   bottom: 0;
   h4 {
     text-align: center;

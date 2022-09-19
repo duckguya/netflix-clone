@@ -1,7 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { useLocation, useMatch, useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useMatch,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import styled from "styled-components";
-import { getMovieSearch, IGetMoviewSearch, ITv } from "../api";
+import { getTvDetail, IGetTvDetail, ITv } from "../api";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
 import { getNowPlaying, IGetMoviesResult, IMovie } from "../api";
@@ -9,6 +14,7 @@ import { makeImagePath } from "../utils";
 
 const Wrapper = styled.div`
   position: relative;
+  width: 100%;
 `;
 const TitleType = styled.p`
   position: absolute;
@@ -17,7 +23,6 @@ const TitleType = styled.p`
   font-size: 1.5rem;
   /* padding-bottom: 0.3rem; */
 `;
-
 const Row = styled(motion.div)`
   display: flex;
   justify-content: flex-start;
@@ -25,6 +30,7 @@ const Row = styled(motion.div)`
   flex-wrap: wrap;
   margin-left: 2.4rem;
 `;
+
 const Box = styled(motion.div)<{ bgphoto: string }>`
   background-color: white;
   background-image: url(${(props) => props.bgphoto});
@@ -47,33 +53,6 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   }
 `;
 
-const BtnOverlay = styled(motion.div)`
-  position: absolute;
-  height: 100%;
-  /* background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)); */
-  /* right: 0; */
-  padding: 0px 20px;
-  display: flex;
-  align-items: center;
-  height: 12rem;
-  overflow: hidden;
-  border-radius: 5px;
-  cursor: pointer;
-`;
-
-const BtnOverlayBack = styled(BtnOverlay)`
-  background: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
-  left: 0;
-`;
-const BtnOverlayForward = styled(BtnOverlay)`
-  background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
-  right: 0;
-`;
-
-const ArrowBtn = styled(motion.div)`
-  color: ${(props) => props.theme.white.darker};
-`;
-
 const Info = styled(motion.div)`
   padding: 10px;
   background-color: ${(props) => props.theme.black.lighter};
@@ -81,6 +60,7 @@ const Info = styled(motion.div)`
   position: absolute;
   /* width: 100%; */
   bottom: 0;
+  width: 100%;
   h4 {
     text-align: center;
     font-size: 18px;
@@ -120,6 +100,7 @@ const BigTitle = styled.h3`
   font-size: 28px;
   position: relative;
   top: -60px;
+  width: 100%;
 `;
 const BigOverView = styled.p`
   padding: 20px;
@@ -221,19 +202,18 @@ interface IProps {
   results: ITv[];
 }
 
-function SearchTv({ keyword, results }: IProps) {
+function SearchMovie({ keyword, results }: IProps) {
   const location = useLocation();
-  //   const keyword = new URLSearchParams(location.search).get("keyword");
-
-  // const results = movies?.results;
+  const tvId = new URLSearchParams(location.search).get("tvId");
+  // let params = useParams();
   const navigate = useNavigate();
-  // useNavigate : url을 이동할 수 있다.
-  const bigMovieMatch = useMatch("/search/:movieId");
+  const bigMovieMatch = useMatch("/search/:tvId");
   const { scrollY } = useScroll();
-  //   const { results, isLoading } = useQuery<IGetMoviesResult>(
-  //     ["movies", "now_playing"],
-  //     getNowPlaying
-  //   );
+
+  const { data, isLoading } = useQuery<IGetTvDetail>(
+    ["movies", "detail"],
+    async () => await getTvDetail(Number(tvId))
+  );
 
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
@@ -243,17 +223,17 @@ function SearchTv({ keyword, results }: IProps) {
   };
 
   const onBoxClicked = (movieId: number) => {
-    navigate(`/movies/${movieId}`);
+    navigate(`/search?keyword=${keyword}&movieId=${movieId}`);
   };
 
-  const onOverlayClicked = () => navigate("/");
+  const onOverlayClicked = () => navigate(`/search?keyword=${keyword}`);
   const clickedMovie =
-    bigMovieMatch?.params.movieId &&
-    results?.find((movie) => String(movie.id) === bigMovieMatch.params.movieId);
+    bigMovieMatch?.params.tvId &&
+    results?.find((movie) => String(movie.id) === bigMovieMatch.params.tvId);
 
   return (
     <Wrapper>
-      <TitleType>Tv Show</TitleType>
+      <TitleType>Movie</TitleType>
       {/* 컴포넌트가 처음 마운트 될 때 animation이 실행되지 않게 한다 */}
       <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
         <Row
@@ -269,19 +249,19 @@ function SearchTv({ keyword, results }: IProps) {
               .slice(1)
               // .slice(offset * index, offset * index + offset)
               .filter((m) => m.backdrop_path)
-              .map((movie) => (
+              .map((tvId) => (
                 <Box
-                  layoutId={movie.id + ""}
-                  key={movie.id}
+                  layoutId={tvId.id + ""}
+                  key={tvId.id}
                   variants={BoxVariants}
                   initial="normal"
                   whileHover="hover"
                   transition={{ type: "tween" }}
-                  bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-                  onClick={() => onBoxClicked(movie.id)}
+                  bgphoto={makeImagePath(tvId.backdrop_path, "w500")}
+                  onClick={() => onBoxClicked(tvId.id)}
                 >
                   <Info variants={InfoVariants}>
-                    <h4>{movie.name}</h4>
+                    <h4>{tvId.name}</h4>
                   </Info>
                 </Box>
 
@@ -290,29 +270,26 @@ function SearchTv({ keyword, results }: IProps) {
         </Row>
       </AnimatePresence>
       <AnimatePresence>
-        {bigMovieMatch ? (
+        {tvId ? (
           <>
             <Overlay
               onClick={onOverlayClicked}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
-            <BigMovie
-              style={{ top: scrollY.get() + 100 }}
-              layoutId={bigMovieMatch.params.movieId}
-            >
-              {clickedMovie && (
+            <BigMovie style={{ top: scrollY.get() + 100 }} layoutId={tvId}>
+              {data && (
                 <>
                   <BigCover
                     style={{
                       backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                        clickedMovie.backdrop_path,
+                        data.backdrop_path,
                         "w500"
                       )})`,
                     }}
                   />
-                  <BigTitle>{clickedMovie.name}</BigTitle>
-                  <BigOverView>{clickedMovie.overview}</BigOverView>
+                  <BigTitle>{data.name}</BigTitle>
+                  <BigOverView>{data.overview}</BigOverView>
                 </>
               )}
             </BigMovie>
@@ -322,4 +299,4 @@ function SearchTv({ keyword, results }: IProps) {
     </Wrapper>
   );
 }
-export default SearchTv;
+export default SearchMovie;

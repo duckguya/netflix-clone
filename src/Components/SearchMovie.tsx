@@ -1,10 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { useLocation, useMatch, useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useMatch,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import styled from "styled-components";
-import { getMovieSearch, IGetMoviewSearch } from "../api";
+import { getMovieDetail, IGetMovieDetail } from "../api";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
-import { getNowPlaying, IGetMoviesResult, IMovie } from "../api";
+import { IMovie } from "../api";
 import { makeImagePath } from "../utils";
 
 const Wrapper = styled.div`
@@ -47,20 +52,6 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   }
 `;
 
-const BtnOverlay = styled(motion.div)`
-  position: absolute;
-  height: 100%;
-  /* background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)); */
-  /* right: 0; */
-  padding: 0px 20px;
-  display: flex;
-  align-items: center;
-  height: 12rem;
-  overflow: hidden;
-  border-radius: 5px;
-  cursor: pointer;
-`;
-
 const Info = styled(motion.div)`
   padding: 10px;
   background-color: ${(props) => props.theme.black.lighter};
@@ -68,6 +59,7 @@ const Info = styled(motion.div)`
   position: absolute;
   /* width: 100%; */
   bottom: 0;
+  width: 100%;
   h4 {
     text-align: center;
     font-size: 18px;
@@ -107,6 +99,7 @@ const BigTitle = styled.h3`
   font-size: 28px;
   position: relative;
   top: -60px;
+  width: 100%;
 `;
 const BigOverView = styled.p`
   padding: 20px;
@@ -210,17 +203,19 @@ interface IProps {
 
 function SearchMovie({ keyword, results }: IProps) {
   const location = useLocation();
-  //   const keyword = new URLSearchParams(location.search).get("keyword");
-
-  // const results = movies?.results;
+  const movieId = new URLSearchParams(location.search).get("movieId");
+  // let params = useParams();
   const navigate = useNavigate();
-  // useNavigate : url을 이동할 수 있다.
   const bigMovieMatch = useMatch("/search/:movieId");
   const { scrollY } = useScroll();
-  //   const { results, isLoading } = useQuery<IGetMoviesResult>(
-  //     ["movies", "now_playing"],
-  //     getNowPlaying
-  //   );
+
+  const { data, isLoading } = useQuery<IGetMovieDetail>(
+    ["search", "detail"],
+    async () => await getMovieDetail(Number(movieId))
+  );
+
+  console.log("movieId", movieId);
+  console.log("location", location);
 
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
@@ -230,10 +225,10 @@ function SearchMovie({ keyword, results }: IProps) {
   };
 
   const onBoxClicked = (movieId: number) => {
-    navigate(`/movies/${movieId}`);
+    navigate(`/search?keyword=${keyword}&movieId=${movieId}`);
   };
 
-  const onOverlayClicked = () => navigate("/");
+  const onOverlayClicked = () => navigate(`/search?keyword=${keyword}`);
   const clickedMovie =
     bigMovieMatch?.params.movieId &&
     results?.find((movie) => String(movie.id) === bigMovieMatch.params.movieId);
@@ -277,29 +272,26 @@ function SearchMovie({ keyword, results }: IProps) {
         </Row>
       </AnimatePresence>
       <AnimatePresence>
-        {bigMovieMatch ? (
+        {movieId ? (
           <>
             <Overlay
               onClick={onOverlayClicked}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
-            <BigMovie
-              style={{ top: scrollY.get() + 100 }}
-              layoutId={bigMovieMatch.params.movieId}
-            >
-              {clickedMovie && (
+            <BigMovie style={{ top: scrollY.get() - 200 }} layoutId={movieId}>
+              {data && (
                 <>
                   <BigCover
                     style={{
                       backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                        clickedMovie.backdrop_path,
+                        data.backdrop_path,
                         "w500"
                       )})`,
                     }}
                   />
-                  <BigTitle>{clickedMovie.title}</BigTitle>
-                  <BigOverView>{clickedMovie.overview}</BigOverView>
+                  <BigTitle>{data.title}</BigTitle>
+                  <BigOverView>{data.overview}</BigOverView>
                 </>
               )}
             </BigMovie>
