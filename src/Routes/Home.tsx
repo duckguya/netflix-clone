@@ -82,7 +82,6 @@ function Home() {
       ["movies", "top_rated"],
       async () => await getTopRated()
     );
-  console.log("nowPlaying", typeof nowPlaying);
   return (
     <Wrapper>
       {comingLoading ? (

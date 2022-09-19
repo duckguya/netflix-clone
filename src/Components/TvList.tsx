@@ -91,7 +91,7 @@ const Overlay = styled(motion.div)`
   opacity: 0;
 `;
 
-const BigMovie = styled(motion.div)`
+const Detail = styled(motion.div)`
   position: absolute;
   width: 40vw;
   height: 80vh;
@@ -103,7 +103,7 @@ const BigMovie = styled(motion.div)`
   background-color: ${(props) => props.theme.black.lighter};
 `;
 
-const BigCover = styled.div`
+const DetailCover = styled.div`
   width: 100%;
   background-size: cover;
   background-position: center center;
@@ -219,7 +219,7 @@ interface IProps {
 
 function TvList({ results, titleType }: IProps) {
   const navigate = useNavigate();
-  const bigMovieMatch = useMatch("/tv/:tvId");
+  const bigTvMatch = useMatch("/tv/:tvId");
   const { scrollY } = useScroll();
 
   const [index, setIndex] = useState(0);
@@ -275,9 +275,9 @@ function TvList({ results, titleType }: IProps) {
   };
 
   const onOverlayClicked = () => navigate("/tv");
-  const clickedMovie =
-    bigMovieMatch?.params.tvId &&
-    results.find((movie) => String(movie.id) === bigMovieMatch.params.tvId);
+  const clickedDetail =
+    bigTvMatch?.params.tvId &&
+    results.find((tv) => String(tv.id) === bigTvMatch.params.tvId);
 
   return (
     <>
@@ -297,19 +297,19 @@ function TvList({ results, titleType }: IProps) {
               results
                 .slice(1)
                 .slice(offset * index, offset * index + offset)
-                .map((movie) => (
+                .map((tv) => (
                   <Box
-                    layoutId={movie.id + ""}
-                    key={movie.id}
+                    layoutId={tv.id + ""}
+                    key={tv.id}
                     variants={BoxVariants}
                     initial="normal"
                     whileHover="hover"
                     transition={{ type: "tween" }}
-                    bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-                    onClick={() => onBoxClicked(movie.id)}
+                    bgphoto={makeImagePath(tv.backdrop_path, "w500")}
+                    onClick={() => onBoxClicked(tv.id)}
                   >
                     <Info variants={InfoVariants}>
-                      <h4>{movie.name}</h4>
+                      <h4>{tv.name}</h4>
                     </Info>
                   </Box>
 
@@ -351,32 +351,32 @@ function TvList({ results, titleType }: IProps) {
         </AnimatePresence>
       </Slider>
       <AnimatePresence>
-        {bigMovieMatch ? (
+        {bigTvMatch ? (
           <>
             <Overlay
               onClick={onOverlayClicked}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
-            <BigMovie
+            <Detail
               style={{ top: scrollY.get() + 100 }}
-              layoutId={bigMovieMatch.params.tvId}
+              layoutId={bigTvMatch.params.tvId}
             >
-              {clickedMovie && (
+              {clickedDetail && (
                 <>
-                  <BigCover
+                  <DetailCover
                     style={{
                       backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                        clickedMovie.backdrop_path,
+                        clickedDetail.backdrop_path,
                         "w500"
                       )})`,
                     }}
                   />
-                  <BigTitle>{clickedMovie.name}</BigTitle>
-                  <BigOverView>{clickedMovie.overview}</BigOverView>
+                  <BigTitle>{clickedDetail.name}</BigTitle>
+                  <BigOverView>{clickedDetail.overview}</BigOverView>
                 </>
               )}
-            </BigMovie>
+            </Detail>
           </>
         ) : null}
       </AnimatePresence>
