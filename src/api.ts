@@ -31,17 +31,16 @@ export interface IGetTvResult {
   total_results: number;
 }
 
-export interface IMovieSearch {
-  id: number;
-  backdrop_path: string;
-  poster_path: string;
-  title: string;
-  overview: string;
-}
-
 export interface IGetMoviewSearch {
   page: number;
-  results: IMovieSearch[];
+  results: IMovie[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface IGetTvSearch {
+  page: number;
+  results: ITv[];
   total_pages: number;
   total_results: number;
 }
@@ -82,9 +81,15 @@ export function getTvTopRated() {
   ).then((response) => response.json());
 }
 
-// search
+// search movie
 export function getMovieSearch(keyowrd: string) {
   return fetch(
     `${BASE_PATH}/search/movie?api_key=${process.env.REACT_APP_API_KEY}&query=${keyowrd}`
+  ).then((response) => response.json());
+}
+// search tv
+export function getTvSearch(keyowrd: string) {
+  return fetch(
+    `${BASE_PATH}/search/tv?api_key=${process.env.REACT_APP_API_KEY}&query=${keyowrd}`
   ).then((response) => response.json());
 }
