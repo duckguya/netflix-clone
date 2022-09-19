@@ -5,8 +5,10 @@ import { makeImagePath } from "../utils";
 import {
   getMovieDetail,
   getNowPlaying,
+  getTvDetail,
   IGetMovieDetail,
   IGetMoviesResult,
+  IGetTvDetail,
   IMovie,
 } from "../api";
 import { useQuery } from "@tanstack/react-query";
@@ -53,23 +55,23 @@ const BigOverView = styled.p`
 `;
 
 interface IProps {
-  results: IMovie[];
+  //   results: IMovie[];
   titleType: string;
-  movieId: number;
+  tvId: number;
 }
 
-function MovieDetail({ titleType, results, movieId }: IProps) {
+function TvDetail({ titleType, tvId }: IProps) {
   const { scrollY } = useScroll();
   const navigate = useNavigate();
-  const onOverlayClicked = () => navigate("/");
-  const bigMovieMatch = useMatch("/movies/:movieId");
+  const onOverlayClicked = () => navigate("/tv");
+  const bigTvMatch = useMatch("/tv/:tvId");
 
-  const { data, isLoading } = useQuery<IGetMovieDetail>(
+  const { data, isLoading } = useQuery<IGetTvDetail>(
     ["movies", "detail"],
-    async () => await getMovieDetail(movieId)
+    async () => await getTvDetail(tvId)
   );
 
-  console.log("bigMovieMatch", movieId);
+  console.log("bigTvMatch", tvId);
 
   // const clickedMovie =
   //   bigMovieMatch?.params.movieId &&
@@ -79,7 +81,7 @@ function MovieDetail({ titleType, results, movieId }: IProps) {
   return (
     <>
       <AnimatePresence>
-        {bigMovieMatch ? (
+        {bigTvMatch ? (
           <>
             <Overlay
               onClick={onOverlayClicked}
@@ -88,7 +90,7 @@ function MovieDetail({ titleType, results, movieId }: IProps) {
             />
             <BigMovie
               style={{ top: scrollY.get() + 100 }}
-              layoutId={bigMovieMatch.params.movieId + titleType}
+              layoutId={bigTvMatch.params.tvId + titleType}
             >
               {data && (
                 <>
@@ -100,7 +102,7 @@ function MovieDetail({ titleType, results, movieId }: IProps) {
                       )})`,
                     }}
                   />
-                  <BigTitle>{data.title}</BigTitle>
+                  <BigTitle>{data.name}</BigTitle>
                   <BigOverView>{data.overview}</BigOverView>
                 </>
               )}
@@ -112,4 +114,4 @@ function MovieDetail({ titleType, results, movieId }: IProps) {
   );
 }
 
-export default MovieDetail;
+export default TvDetail;

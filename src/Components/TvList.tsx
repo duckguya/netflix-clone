@@ -5,6 +5,7 @@ import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { getNowPlaying, IGetMoviesResult, IMovie, ITv } from "../api";
 import { makeImagePath } from "../utils";
+import TvDetail from "./TvDetail";
 
 const TitleType = styled.p`
   font-size: 1.4rem;
@@ -212,18 +213,18 @@ const BtnVariants = {
 const offset = 6;
 
 interface IProps {
-  //   children?: React.ReactNode;
+  children?: React.ReactNode;
   results: ITv[];
   titleType: string;
 }
 
 function TvList({ results, titleType }: IProps) {
   const navigate = useNavigate();
-  const bigTvMatch = useMatch("/tv/:tvId");
-  const { scrollY } = useScroll();
 
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const bigTvMatch = useMatch("/tv/:tvId");
+  const [tvId, setTvId] = useState(Number(bigTvMatch?.params.tvId) | 0);
 
   const increaseIndex = () => {
     if (results) {
@@ -261,23 +262,14 @@ function TvList({ results, titleType }: IProps) {
     }
   };
 
-  // function template({d:string}){
-
-  //   return null
-  // }
-
   const toggleLeaving = () => {
     setLeaving((prev) => !prev);
   };
 
   const onBoxClicked = (tvId: number) => {
+    setTvId(tvId);
     navigate(`/tv/${tvId}`);
   };
-
-  const onOverlayClicked = () => navigate("/tv");
-  const clickedDetail =
-    bigTvMatch?.params.tvId &&
-    results.find((tv) => String(tv.id) === bigTvMatch.params.tvId);
 
   return (
     <>
@@ -299,8 +291,8 @@ function TvList({ results, titleType }: IProps) {
                 .slice(offset * index, offset * index + offset)
                 .map((tv) => (
                   <Box
-                    layoutId={tv.id + ""}
-                    key={tv.id}
+                    layoutId={tv.id + titleType}
+                    key={tv.id + titleType}
                     variants={BoxVariants}
                     initial="normal"
                     whileHover="hover"
@@ -350,36 +342,7 @@ function TvList({ results, titleType }: IProps) {
           </BtnOverlayForward>
         </AnimatePresence>
       </Slider>
-      <AnimatePresence>
-        {bigTvMatch ? (
-          <>
-            <Overlay
-              onClick={onOverlayClicked}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <Detail
-              style={{ top: scrollY.get() + 100 }}
-              layoutId={bigTvMatch.params.tvId}
-            >
-              {clickedDetail && (
-                <>
-                  <DetailCover
-                    style={{
-                      backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                        clickedDetail.backdrop_path,
-                        "w500"
-                      )})`,
-                    }}
-                  />
-                  <BigTitle>{clickedDetail.name}</BigTitle>
-                  <BigOverView>{clickedDetail.overview}</BigOverView>
-                </>
-              )}
-            </Detail>
-          </>
-        ) : null}
-      </AnimatePresence>
+      {tvId !== 0 ? <TvDetail titleType={titleType} tvId={tvId} /> : ""}
     </>
   );
 }

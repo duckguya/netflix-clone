@@ -182,6 +182,10 @@ function MovieList({ results, titleType }: IProps) {
 
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const bigMovieMatch = useMatch("/movies/:movieId");
+  const [movieId, setMovieId] = useState(
+    Number(bigMovieMatch?.params.movieId) | 0
+  );
 
   const increaseIndex = () => {
     if (results) {
@@ -224,6 +228,7 @@ function MovieList({ results, titleType }: IProps) {
   };
 
   const onBoxClicked = (movieId: number) => {
+    setMovieId(movieId);
     navigate(`/movies/${movieId}`);
   };
 
@@ -298,7 +303,15 @@ function MovieList({ results, titleType }: IProps) {
           </BtnOverlayForward>
         </AnimatePresence>
       </Slider>
-      {results ? <MovieDetail results={results} titleType={titleType} /> : ""}
+      {movieId !== 0 ? (
+        <MovieDetail
+          results={results}
+          titleType={titleType}
+          movieId={movieId}
+        />
+      ) : (
+        ""
+      )}
     </>
   );
 }
