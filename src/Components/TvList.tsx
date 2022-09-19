@@ -3,49 +3,8 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { getNowPlaying, IGetMoviesResult } from "../api";
+import { getNowPlaying, IGetMoviesResult, IMovie, ITv } from "../api";
 import { makeImagePath } from "../utils";
-
-const Wrapper = styled.div`
-  /* background: ${(props) => props.theme.black.veryDark}; */
-  background: ${(props) => props.theme.black.veryDark};
-`;
-
-const Loader = styled.div`
-  height: 20vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Banner = styled.div<{ bgPhoto: string }>`
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 3.55rem;
-  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
-    url(${(props) => props.bgPhoto});
-  background-size: cover;
-
-  mask-image: -webkit-gradient(
-    linear,
-    left center,
-    left bottom,
-    from(rgba(0, 0, 0, 1)),
-    to(rgba(0, 0, 0, 0))
-  );
-`;
-
-const Title = styled.h2`
-  font-size: 4rem;
-  margin-bottom: 1rem;
-`;
-const Overview = styled.p`
-  font-size: 1.3rem;
-  width: 50%;
-  height: 50%;
-`;
 
 const TitleType = styled.p`
   font-size: 1.4rem;
@@ -81,9 +40,6 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   &:last-child {
     transform-origin: right center;
   }
-  @media screen and (max-width: 1200px) {
-    height: 7rem;
-  }
 `;
 
 const BtnOverlay = styled(motion.div)`
@@ -98,9 +54,6 @@ const BtnOverlay = styled(motion.div)`
   overflow: hidden;
   border-radius: 5px;
   cursor: pointer;
-  @media screen and (max-width: 1200px) {
-    height: 7rem;
-  }
 `;
 
 const BtnOverlayBack = styled(BtnOverlay)`
@@ -258,43 +211,35 @@ const BtnVariants = {
 
 const offset = 6;
 
-function NowPlaying() {
+interface IProps {
+  //   children?: React.ReactNode;
+  results: ITv[];
+  titleType: string;
+}
+
+function TvList({ results, titleType }: IProps) {
   const navigate = useNavigate();
-  // useNavigate : url을 이동할 수 있다.
-  const bigMovieMatch = useMatch("/movies/:movieId");
+  const bigMovieMatch = useMatch("/tv/:tvId");
   const { scrollY } = useScroll();
-  const { data, isLoading } = useQuery<IGetMoviesResult>(
-    ["movies", "now_playing"],
-    getNowPlaying
-  );
 
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
 
-  // 슬라이드 다음 버튼을 연속으로 눌렀을 때 animation이 반복되면서 발생하는 버그를 막는다.
-  //   increaseIndex함수가 실행되면
-  // leaving이 false로 들어와서 if문을 통과하고
-  // 1. toggleLeaving함수가 실행된다.
-  // 2.toggleLeaving함수는 setLeaving을 true로 바꾼다.
-  // 3.setIndex를 +1시킨다.
-  // 4.setIndex가 실행되면 animation이 실행된다.
-  // 5.animation이 실행되고 exit가 끝나면 onExitCompete에 걸려있던 toggleLeaving이 한 번 더 실행되면서 false로 바뀐다.
-
   const increaseIndex = () => {
-    if (data) {
+    if (results) {
       if (leaving) return;
       toggleLeaving();
-      const totlaMovies = data.results.length - 1;
+      const totlaMovies = results.length - 1;
       const maxIndex = Math.floor(totlaMovies / offset) - 1;
       // Math.ceil : 올림처리를 하는 함수. <-> Math.floor()
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
   };
   const decreaseIndex = () => {
-    if (data) {
+    if (results) {
       if (leaving) return;
       toggleLeaving();
-      const totlaMovies = data.results.length - 1;
+      const totlaMovies = results.length - 1;
       const maxIndex = Math.floor(totlaMovies / offset) - 1;
       // Math.ceil : 올림처리를 하는 함수. <-> Math.floor()
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
@@ -302,10 +247,10 @@ function NowPlaying() {
   };
 
   const changeIndex = (arrow: string) => {
-    if (data) {
+    if (results) {
       if (leaving) return;
       toggleLeaving();
-      const totlaMovies = data.results.length - 1;
+      const totlaMovies = results.length - 1;
       const maxIndex = Math.floor(totlaMovies / offset) - 1;
       // Math.ceil : 올림처리를 하는 함수. <-> Math.floor()
       if (arrow === "back") {
@@ -325,21 +270,19 @@ function NowPlaying() {
     setLeaving((prev) => !prev);
   };
 
-  const onBoxClicked = (movieId: number) => {
-    navigate(`/movies/${movieId}`);
+  const onBoxClicked = (tvId: number) => {
+    navigate(`/tv/${tvId}`);
   };
 
-  const onOverlayClicked = () => navigate("/");
+  const onOverlayClicked = () => navigate("/tv");
   const clickedMovie =
-    bigMovieMatch?.params.movieId &&
-    data?.results.find(
-      (movie) => String(movie.id) === bigMovieMatch.params.movieId
-    );
+    bigMovieMatch?.params.tvId &&
+    results.find((movie) => String(movie.id) === bigMovieMatch.params.tvId);
 
   return (
     <>
       <Slider>
-        <TitleType>Now Playing</TitleType>
+        <TitleType>{titleType}</TitleType>
         {/* 컴포넌트가 처음 마운트 될 때 animation이 실행되지 않게 한다 */}
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
           <Row
@@ -350,27 +293,28 @@ function NowPlaying() {
             transition={{ type: "tween", duration: 1 }}
             key={index}
           >
-            {data?.results
-              .slice(1)
-              .slice(offset * index, offset * index + offset)
-              .map((movie) => (
-                <Box
-                  layoutId={movie.id + ""}
-                  key={movie.id}
-                  variants={BoxVariants}
-                  initial="normal"
-                  whileHover="hover"
-                  transition={{ type: "tween" }}
-                  bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-                  onClick={() => onBoxClicked(movie.id)}
-                >
-                  <Info variants={InfoVariants}>
-                    <h4>{movie.title}</h4>
-                  </Info>
-                </Box>
+            {results &&
+              results
+                .slice(1)
+                .slice(offset * index, offset * index + offset)
+                .map((movie) => (
+                  <Box
+                    layoutId={movie.id + ""}
+                    key={movie.id}
+                    variants={BoxVariants}
+                    initial="normal"
+                    whileHover="hover"
+                    transition={{ type: "tween" }}
+                    bgphoto={makeImagePath(movie.backdrop_path, "w500")}
+                    onClick={() => onBoxClicked(movie.id)}
+                  >
+                    <Info variants={InfoVariants}>
+                      <h4>{movie.name}</h4>
+                    </Info>
+                  </Box>
 
-                // 부모 element에 variants를 가지고있으면 자식요소도 갖게된다.
-              ))}
+                  // 부모 element에 variants를 가지고있으면 자식요소도 갖게된다.
+                ))}
           </Row>
           <BtnOverlayBack
             key={index + 1}
@@ -416,7 +360,7 @@ function NowPlaying() {
             />
             <BigMovie
               style={{ top: scrollY.get() + 100 }}
-              layoutId={bigMovieMatch.params.movieId}
+              layoutId={bigMovieMatch.params.tvId}
             >
               {clickedMovie && (
                 <>
@@ -428,7 +372,7 @@ function NowPlaying() {
                       )})`,
                     }}
                   />
-                  <BigTitle>{clickedMovie.title}</BigTitle>
+                  <BigTitle>{clickedMovie.name}</BigTitle>
                   <BigOverView>{clickedMovie.overview}</BigOverView>
                 </>
               )}
@@ -439,4 +383,4 @@ function NowPlaying() {
     </>
   );
 }
-export default NowPlaying;
+export default TvList;

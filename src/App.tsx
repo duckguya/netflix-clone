@@ -8,7 +8,9 @@ function App() {
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path="/tv" element={<Tv />} />
+        <Route path="/tv" element={<Tv />}>
+          <Route path=":tvId" element={<Tv />} />
+        </Route>
         <Route path="/search" element={<Search />} />
         <Route path="/" element={<Home />}>
           <Route path="netflix-clone" element={<Home />} />
