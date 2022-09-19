@@ -5,6 +5,7 @@ import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { getNowPlaying, IGetMoviesResult, IMovie } from "../api";
 import { makeImagePath } from "../utils";
+import MovieDetail from "./MovieDetail";
 
 const TitleType = styled.p`
   font-size: 1.4rem;
@@ -80,47 +81,6 @@ const Info = styled(motion.div)`
     text-align: center;
     font-size: 18px;
   }
-`;
-
-const Overlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-`;
-
-const BigMovie = styled(motion.div)`
-  position: absolute;
-  width: 40vw;
-  height: 80vh;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  border-radius: 15px;
-  overflow: hidden;
-  background-color: ${(props) => props.theme.black.lighter};
-`;
-
-const BigCover = styled.div`
-  width: 100%;
-  background-size: cover;
-  background-position: center center;
-  height: 50%;
-`;
-const BigTitle = styled.h3`
-  color: ${(props) => props.theme.white.lighter};
-  padding: 10px;
-  font-size: 28px;
-  position: relative;
-  top: -60px;
-`;
-const BigOverView = styled.p`
-  padding: 20px;
-  position: relative;
-  top: -60px;
-  color: ${(props) => props.theme.white.lighter};
 `;
 
 const rowVariants = {
@@ -219,13 +179,6 @@ interface IProps {
 
 function MovieList({ results, titleType }: IProps) {
   const navigate = useNavigate();
-  // useNavigate : url을 이동할 수 있다.
-  const bigMovieMatch = useMatch("/movies/:movieId");
-  const { scrollY } = useScroll();
-  //   const { results, isLoading } = useQuery<IGetMoviesResult>(
-  //     ["movies", "now_playing"],
-  //     getNowPlaying
-  //   );
 
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
@@ -266,11 +219,6 @@ function MovieList({ results, titleType }: IProps) {
     }
   };
 
-  // function template({d:string}){
-
-  //   return null
-  // }
-
   const toggleLeaving = () => {
     setLeaving((prev) => !prev);
   };
@@ -278,11 +226,6 @@ function MovieList({ results, titleType }: IProps) {
   const onBoxClicked = (movieId: number) => {
     navigate(`/movies/${movieId}`);
   };
-
-  const onOverlayClicked = () => navigate("/");
-  const clickedMovie =
-    bigMovieMatch?.params.movieId &&
-    results.find((movie) => String(movie.id) === bigMovieMatch.params.movieId);
 
   return (
     <>
@@ -355,36 +298,7 @@ function MovieList({ results, titleType }: IProps) {
           </BtnOverlayForward>
         </AnimatePresence>
       </Slider>
-      <AnimatePresence>
-        {bigMovieMatch ? (
-          <>
-            <Overlay
-              onClick={onOverlayClicked}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            />
-            <BigMovie
-              style={{ top: scrollY.get() + 100 }}
-              layoutId={bigMovieMatch.params.movieId + titleType}
-            >
-              {clickedMovie && (
-                <>
-                  <BigCover
-                    style={{
-                      backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(
-                        clickedMovie.backdrop_path,
-                        "w500"
-                      )})`,
-                    }}
-                  />
-                  <BigTitle>{clickedMovie.title}</BigTitle>
-                  <BigOverView>{clickedMovie.overview}</BigOverView>
-                </>
-              )}
-            </BigMovie>
-          </>
-        ) : null}
-      </AnimatePresence>
+      {results ? <MovieDetail results={results} titleType={titleType} /> : ""}
     </>
   );
 }
