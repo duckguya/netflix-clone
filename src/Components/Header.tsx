@@ -55,6 +55,7 @@ const Search = styled.form`
   display: flex;
   align-items: center;
   position: relative;
+  cursor: pointer;
   svg {
     height: 25px;
   }
@@ -206,7 +207,6 @@ function Header() {
             placeholder="Search for movie or tv show..."
           />
         </Search>
-        <button>search</button>
       </Col>
     </Nav>
   );

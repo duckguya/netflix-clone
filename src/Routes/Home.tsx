@@ -26,7 +26,7 @@ const Loader = styled.div`
 `;
 
 const Banner = styled.div<{ bgPhoto: string }>`
-  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -46,12 +46,14 @@ const Banner = styled.div<{ bgPhoto: string }>`
 const Title = styled.h2`
   font-size: 4rem;
   margin-bottom: 1rem;
+  color: white;
 `;
 const Overview = styled.p`
   font-size: 1.3rem;
   width: 50%;
-  /* height: 50%; */
+  height: 30%;
   padding-bottom: 3rem;
+  color: white;
 `;
 const SlideWrapper = styled.div`
   display: flex;
@@ -83,6 +85,7 @@ function Home() {
       ["movies", "top_rated"],
       async () => await getTopRated()
     );
+
   return (
     <Wrapper>
       {comingLoading ? (

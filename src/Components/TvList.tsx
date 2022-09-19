@@ -19,11 +19,11 @@ const Slider = styled.div`
 
 const Row = styled(motion.div)`
   display: grid;
-  gap: 5px;
+  gap: 7px;
   grid-template-columns: repeat(6, 1fr);
   position: absolute;
   width: 100%;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 `;
 
 const Box = styled(motion.div)<{ bgphoto: string }>`

@@ -19,11 +19,11 @@ const Slider = styled.div`
 
 const Row = styled(motion.div)`
   display: grid;
-  gap: 5px;
+  gap: 7px;
   grid-template-columns: repeat(6, 1fr);
   position: absolute;
   width: 100%;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 `;
 
 const Box = styled(motion.div)<{ bgphoto: string }>`
@@ -304,8 +304,8 @@ function MovieList({ results, titleType }: IProps) {
                 .slice(offset * index, offset * index + offset)
                 .map((movie) => (
                   <Box
-                    layoutId={movie.id + ""}
-                    key={movie.id}
+                    layoutId={movie.id + titleType}
+                    key={movie.id + titleType}
                     variants={BoxVariants}
                     initial="normal"
                     whileHover="hover"
@@ -365,7 +365,7 @@ function MovieList({ results, titleType }: IProps) {
             />
             <BigMovie
               style={{ top: scrollY.get() + 100 }}
-              layoutId={bigMovieMatch.params.movieId}
+              layoutId={bigMovieMatch.params.movieId + titleType}
             >
               {clickedMovie && (
                 <>
