@@ -270,36 +270,43 @@ const BtnVariants = {
 const offset = 6;
 
 function Home() {
-  const nowPlaying = useQuery<IGetMoviesResult>(
-    ["movies", "now_playing"],
-    getNowPlaying
-  );
-  const upcoming = useQuery<IGetMoviesResult>(
+  const {
+    data: nowPlaying,
+    isLoading: nowLoading,
+    error: nowError,
+  } = useQuery<IGetMoviesResult>(["movies", "now_playing"], getNowPlaying);
+
+  const {
+    data: upcoming,
+    isLoading: comingLoading,
+    error: comingError,
+  } = useQuery<IGetMoviesResult>(
     ["movies", "upcoming"],
-    getUpcoming
+    async () => await getUpcoming()
   );
-  console.log(nowPlaying);
 
   return (
     <Wrapper>
-      {nowPlaying.isLoading ? (
+      {comingLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
           <Banner
-            bgPhoto={makeImagePath(
-              nowPlaying.data?.results[0].backdrop_path || ""
-            )}
+            bgPhoto={makeImagePath(nowPlaying?.results[0].backdrop_path || "")}
           >
-            <Title>{nowPlaying.data?.results[0].title}</Title>
-            <Overview>{nowPlaying.data?.results[0].overview}</Overview>
+            <Title>{nowPlaying?.results[0].title}</Title>
+            <Overview>{nowPlaying?.results[0].overview}</Overview>
           </Banner>
           <SlideWrapper>
             {/* <NowPlaying /> */}
-            <MovieList key="1dd" {...nowPlaying.data} />
+            {nowPlaying ? (
+              <MovieList {...nowPlaying} titleType="Now Playing" />
+            ) : (
+              ""
+            )}
             <Space />
             {/* <Upcoming /> */}
-            <MovieList {...upcoming.data} />
+            {upcoming ? <MovieList {...upcoming} titleType="Up Coming" /> : ""}
             <Space />
           </SlideWrapper>
         </>

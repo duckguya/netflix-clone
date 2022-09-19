@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { getNowPlaying, IGetMoviesResult } from "../api";
+import { getNowPlaying, IGetMoviesResult, IMovie } from "../api";
 import { makeImagePath } from "../utils";
 
 const TitleType = styled.p`
@@ -211,7 +211,13 @@ const BtnVariants = {
 
 const offset = 6;
 
-function MovieList({ results }: IGetMoviesResult) {
+interface IProps {
+  children?: React.ReactNode;
+  results: IMovie[];
+  titleType: string;
+}
+
+function MovieList({ results, titleType }: IProps) {
   const navigate = useNavigate();
   // useNavigate : url을 이동할 수 있다.
   const bigMovieMatch = useMatch("/movies/:movieId");
@@ -281,7 +287,7 @@ function MovieList({ results }: IGetMoviesResult) {
   return (
     <>
       <Slider>
-        <TitleType>Now Playing</TitleType>
+        <TitleType>{titleType}</TitleType>
         {/* 컴포넌트가 처음 마운트 될 때 animation이 실행되지 않게 한다 */}
         <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
           <Row
