@@ -14,6 +14,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";
+import StarRate from "./StarRate";
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -78,20 +79,25 @@ const ContentLeft = styled.div`
 const ContentRight = styled.div`
   display: flex;
   width: 30vw;
-  font-size: 13px;
+  font-size: 14px;
   label {
     color: ${(props) => props.theme.black.lighter};
+  }
+  p {
+    margin-right: 0.5rem;
   }
 `;
 const ContentDetail = styled.div`
   display: flex;
+  align-items: center;
   p {
     padding-right: 1rem;
   }
 `;
 const OverView = styled.p`
   padding-top: 2rem;
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 1.5rem;
 `;
 const ContentBack = styled.div`
   background-color: #2e2e2e;
@@ -255,19 +261,22 @@ function MovieDetail({ titleType }: IProps) {
                           <ContentDetail>
                             <p>{data.release_date.split("-")[0]}</p>
                             <p>{data.runtime}분</p>
-                            <p>{data.vote_average}별</p>
+                            <StarRate rate={data.vote_average} />
+                            {String(data.vote_average).slice(0, 3)}
                           </ContentDetail>
                           <OverView>
-                            {data.overview.slice(0, 300) + "..."}
+                            {data.overview.length > 300
+                              ? data.overview.slice(0, 300) + "..."
+                              : data.overview}
                           </OverView>
                         </ContentLeft>
                         <ContentRight>
-                          <label>장르:</label>
+                          <label>장르&nbsp;:&nbsp;</label>
                           {data.genres.map((d) =>
                             d.id === data.genres[data.genres.length - 1].id ? (
                               <p key={d.id}>{d.name}</p>
                             ) : (
-                              <p key={d.id}>{d.name},&nbsp;</p>
+                              <p key={d.id}>{d.name},</p>
                             )
                           )}
                         </ContentRight>
