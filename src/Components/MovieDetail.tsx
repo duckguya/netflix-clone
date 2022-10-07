@@ -25,6 +25,9 @@ const BigMovie = styled(motion.div)`
   border-radius: 15px;
   overflow: hidden;
   background-color: ${(props) => props.theme.black.veryDark};
+  letter-spacing: 0.5px;
+  word-spacing: 0.1px;
+  line-height: 20px;
   z-index: 10;
   @media screen and (min-width: 1200px) {
     width: 50vw;
@@ -44,11 +47,37 @@ const BigTitle = styled.h3`
   position: relative;
   top: -60px;
 `;
-const BigOverView = styled.p`
+
+const ContentWrapper = styled.div`
+  display: flex;
   padding: 20px;
-  position: relative;
-  top: -60px;
+`;
+const ContentLeft = styled.p`
+  /* position: relative; */
+  /* top: -60px; */
   color: ${(props) => props.theme.white.lighter};
+  width: 70vw;
+  padding-right: 2rem;
+  font-size: 15px;
+`;
+// const ContentLeft = styled.div``;
+const ContentRight = styled.div`
+  display: flex;
+  width: 30vw;
+  font-size: 13px;
+  label {
+    color: ${(props) => props.theme.black.lighter};
+  }
+`;
+const ContentDetail = styled.div`
+  display: flex;
+  p {
+    padding-right: 1rem;
+  }
+`;
+const OverView = styled.p`
+  padding-top: 2rem;
+  font-size: 13px;
 `;
 
 interface IProps {
@@ -72,6 +101,7 @@ function MovieDetail({ titleType }: IProps) {
     () => getMovieDetail(id),
     { enabled: !!id }
   );
+  console.log(data);
 
   // const clickedMovie =
   //   bigMovieMatch?.params.movieId &&
@@ -104,7 +134,26 @@ function MovieDetail({ titleType }: IProps) {
                       }}
                     />
                     <BigTitle>{data.title}</BigTitle>
-                    <BigOverView>{data.overview}</BigOverView>
+                    <ContentWrapper>
+                      <ContentLeft>
+                        <ContentDetail>
+                          <p>{data.release_date.split("-")[0]}</p>
+                          <p>{data.runtime}분</p>
+                          <p>{data.vote_average}별</p>
+                        </ContentDetail>
+                        <OverView>{data.overview}</OverView>
+                      </ContentLeft>
+                      <ContentRight>
+                        <label>장르:</label>
+                        <p>
+                          {data.genres.map((d) =>
+                            d.id === data.genres[data.genres.length - 1].id
+                              ? d.name
+                              : d.name + ", "
+                          )}
+                        </p>
+                      </ContentRight>
+                    </ContentWrapper>
                   </>
                 )}
               </BigMovie>

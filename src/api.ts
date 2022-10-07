@@ -128,55 +128,55 @@ export interface IGetTvDetail {
 // movie list
 export function getNowPlaying() {
   return fetch(
-    `${BASE_PATH}/movie/now_playing?api_key=${process.env.REACT_APP_API_KEY}`
+    `${BASE_PATH}/movie/now_playing?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   ).then((response) => response.json());
 }
 
 export function getUpcoming() {
   return fetch(
-    `${BASE_PATH}/movie/upcoming?api_key=${process.env.REACT_APP_API_KEY}`
+    `${BASE_PATH}/movie/upcoming?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   ).then((response) => response.json());
 }
 
 export function getTopRated() {
   return fetch(
-    `${BASE_PATH}/movie/top_rated?api_key=${process.env.REACT_APP_API_KEY}`
+    `${BASE_PATH}/movie/top_rated?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   ).then((response) => response.json());
 }
 
 // tv list
 export function getTvAiringToday() {
   return fetch(
-    `${BASE_PATH}/tv/airing_today?api_key=${process.env.REACT_APP_API_KEY}`
+    `${BASE_PATH}/tv/airing_today?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   ).then((response) => response.json());
 }
 export function getTvPopular() {
   return fetch(
-    `${BASE_PATH}/tv/popular?api_key=${process.env.REACT_APP_API_KEY}`
+    `${BASE_PATH}/tv/popular?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   ).then((response) => response.json());
 }
 export function getTvTopRated() {
   return fetch(
-    `${BASE_PATH}/tv/top_rated?api_key=${process.env.REACT_APP_API_KEY}`
+    `${BASE_PATH}/tv/top_rated?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   ).then((response) => response.json());
 }
 
 // search
 export function getMovieSearch(keyowrd: string) {
   return fetch(
-    `${BASE_PATH}/search/movie?api_key=${process.env.REACT_APP_API_KEY}&query=${keyowrd}`
+    `${BASE_PATH}/search/movie?api_key=${process.env.REACT_APP_API_KEY}&query=${keyowrd}&language=ko-KR`
   ).then((response) => response.json());
 }
 export function getTvSearch(keyowrd: string) {
   return fetch(
-    `${BASE_PATH}/search/tv?api_key=${process.env.REACT_APP_API_KEY}&query=${keyowrd}`
+    `${BASE_PATH}/search/tv?api_key=${process.env.REACT_APP_API_KEY}&query=${keyowrd}&language=ko-KR`
   ).then((response) => response.json());
 }
 
 // detail
 export async function getMovieDetail(movieId: number) {
   const response = await axios.get(
-    `${BASE_PATH}/movie/${movieId}?api_key=${process.env.REACT_APP_API_KEY}`
+    `${BASE_PATH}/movie/${movieId}?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   );
   return response.data;
   // return fetch(
@@ -185,7 +185,7 @@ export async function getMovieDetail(movieId: number) {
 }
 export async function getTvDetail(tvId: number) {
   const response = await axios.get(
-    `${BASE_PATH}/tv/${tvId}?api_key=${process.env.REACT_APP_API_KEY}`
+    `${BASE_PATH}/tv/${tvId}?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   );
   return response.data;
 }
