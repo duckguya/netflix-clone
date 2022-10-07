@@ -148,6 +148,23 @@ export interface ISimilarMovie {
   vote_count: number;
 }
 
+interface IVideos {
+  iso_639_1: string;
+  iso_3166_1: string;
+  name: string;
+  key: string;
+  site: string;
+  size: number;
+  type: string;
+  official: boolean;
+  published_at: string;
+  id: string;
+}
+export interface IGetMovieVideos {
+  id: number;
+  results: IVideos[];
+}
+
 // movie list
 export async function getNowPlaying() {
   return fetch(
@@ -217,6 +234,14 @@ export async function getTvDetail(tvId: number) {
 export async function getSimilarMovies(movieId: number) {
   const response = await axios.get(
     `${BASE_PATH}/movie/${movieId}/similar?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR&page=1`
+  );
+  return response.data;
+}
+
+// get videos
+export async function getMovieVideos(id: number) {
+  const response = await axios.get(
+    `${BASE_PATH}/movie/${id}/videos?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   );
   return response.data;
 }

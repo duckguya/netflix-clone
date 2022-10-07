@@ -5,12 +5,15 @@ import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import {
   getMovieDetail,
+  getMovieVideos,
   getSimilarMovies,
   IGetMovieDetail,
+  IGetMovieVideos,
   IGetSimilarMovie,
 } from "../api";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import ReactPlayer from "react-player/lazy";
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -40,10 +43,11 @@ const BigMovie = styled(motion.div)`
   }
 `;
 const ContentContainer = styled.div`
-  padding: 0 2rem; ;
+  padding: 0 2rem 2rem 2rem;
+  background-color: ${(props) => props.theme.black.veryDark};
 `;
 
-const BigCover = styled.div`
+const BigCover = styled.iframe`
   width: 100%;
   background-size: cover;
   background-position: center center;
@@ -51,18 +55,18 @@ const BigCover = styled.div`
 `;
 const BigTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
-  padding: 10px;
+  /* padding: 10px; */
   font-size: 28px;
-  position: relative;
-  top: -60px;
+  /* position: relative; */
+  /* top: -10px; */
+  padding: 2rem 0;
 `;
 
 const ContentWrapper = styled.div`
   display: flex;
-  padding: 20px;
   position: relative;
 `;
-const ContentLeft = styled.p`
+const ContentLeft = styled.div`
   /* position: relative; */
   /* top: -60px; */
   color: ${(props) => props.theme.white.lighter};
@@ -96,7 +100,6 @@ const ContentBack = styled.div`
   border-radius: 0.5rem;
 `;
 const ContentImage = styled.div`
-  padding: 1rem;
   display: grid;
   gap: 1.2rem;
   grid-template-columns: repeat(3, 1fr);
@@ -104,6 +107,7 @@ const ContentImage = styled.div`
   width: 100%;
   margin-bottom: 4rem;
 `;
+
 const Box = styled(motion.div)<{ bgphoto: string }>`
   position: relative;
   background-color: white;
@@ -135,6 +139,11 @@ const Info = styled(motion.div)`
   div {
     padding: 0.5rem 0;
   }
+`;
+const Title = styled.p`
+  font-size: 1.4rem;
+  font-weight: 350;
+  padding: 3rem 0 1rem 0;
 `;
 
 const InfoVariants = {
@@ -169,7 +178,10 @@ function MovieDetail({ titleType }: IProps) {
     () => getMovieDetail(id),
     { enabled: !!id }
   );
-
+  const { data: videos, isLoading: videosIsLoading } =
+    useQuery<IGetMovieVideos>(["videos", id], () => getMovieVideos(id), {
+      enabled: !!id,
+    });
   const { data: similarResults, isLoading: similarIsLoading } =
     useQuery<IGetSimilarMovie>(
       ["similar-movies", id],
@@ -209,15 +221,33 @@ function MovieDetail({ titleType }: IProps) {
               >
                 {data && (
                   <>
-                    <BigCover
-                      style={{
-                        backgroundImage: `linear-gradient(to top, #141414, transparent), url(${makeImagePath(
-                          data.backdrop_path,
-                          "w500"
-                        )})`,
-                        borderRadius: "15px",
-                      }}
-                    />
+                    {videos?.results &&
+                      (videos?.results.length > 0 ? (
+                        <ReactPlayer
+                          className="react-player"
+                          url={`https://www.youtube.com/embed/${videos?.results[0].key}?autoplay=1`}
+                          // poster={makeImagePath(data.backdrop_path, "w500")}
+                          width="100%"
+                          height="50%"
+                          playing={true}
+                          muted={false}
+                          // volume={0.5}
+                          light={true}
+                          controls={false}
+                          // style={{ borderRadius: "15px" }}
+                        ></ReactPlayer>
+                      ) : (
+                        <BigCover
+                          style={{
+                            backgroundImage: `linear-gradient(to top, #141414, transparent), url(${makeImagePath(
+                              data.backdrop_path,
+                              "w500"
+                            )})`,
+                            borderRadius: "15px",
+                          }}
+                        />
+                      ))}
+
                     <ContentContainer>
                       <BigTitle>{data.title}</BigTitle>
                       <ContentWrapper>
@@ -233,19 +263,20 @@ function MovieDetail({ titleType }: IProps) {
                         </ContentLeft>
                         <ContentRight>
                           <label>장르:</label>
-                          <p>
-                            {data.genres.map((d) =>
-                              d.id === data.genres[data.genres.length - 1].id
-                                ? d.name
-                                : d.name + ", "
-                            )}
-                          </p>
+                          {data.genres.map((d) =>
+                            d.id === data.genres[data.genres.length - 1].id ? (
+                              <p key={d.id}>{d.name}</p>
+                            ) : (
+                              <p key={d.id}>{d.name},&nbsp;</p>
+                            )
+                          )}
                         </ContentRight>
                       </ContentWrapper>
+                      <Title>비슷한 콘텐츠</Title>
                       <ContentImage>
                         {similarData?.results &&
                           similarData.results.map((movie) => [
-                            <ContentBack>
+                            <ContentBack key={movie.id}>
                               <Box
                                 key={movie.id + titleType}
                                 bgphoto={makeImagePath(
@@ -257,7 +288,11 @@ function MovieDetail({ titleType }: IProps) {
                               <Info>
                                 <h4>{movie.title}</h4>
                                 <div>{movie.vote_average}</div>
-                                <p>{movie.overview.slice(0, 80) + "..."}</p>
+                                <p>
+                                  {movie.overview.length > 80
+                                    ? movie.overview.slice(0, 80)
+                                    : ""}
+                                </p>
                               </Info>
                             </ContentBack>,
                           ])}
