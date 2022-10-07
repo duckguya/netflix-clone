@@ -142,14 +142,20 @@ const Info = styled(motion.div)`
   p {
     font-size: 0.8rem;
   }
-  div {
+  /* div {
     padding: 0.5rem 0;
-  }
+  } */
 `;
 const Title = styled.p`
   font-size: 1.4rem;
   font-weight: 350;
   padding: 3rem 0 1rem 0;
+`;
+
+const StarWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
 `;
 
 const InfoVariants = {
@@ -296,7 +302,10 @@ function MovieDetail({ titleType }: IProps) {
                               ></Box>
                               <Info>
                                 <h4>{movie.title}</h4>
-                                <div>{movie.vote_average}</div>
+                                <StarWrapper>
+                                  <StarRate rate={data.vote_average} />
+                                  {String(data.vote_average).slice(0, 3)}
+                                </StarWrapper>
                                 <p>
                                   {movie.overview.length > 80
                                     ? movie.overview.slice(0, 80)
