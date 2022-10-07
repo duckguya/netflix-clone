@@ -3,8 +3,14 @@ import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useMatch, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
-import { getMovieDetail, IGetMovieDetail } from "../api";
+import {
+  getMovieDetail,
+  getSimilarMovies,
+  IGetMovieDetail,
+  IGetSimilarMovie,
+} from "../api";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -18,20 +24,23 @@ const Overlay = styled(motion.div)`
 const BigMovie = styled(motion.div)`
   position: absolute;
   width: 90vw;
-  height: 80vh;
+  height: 100%;
   left: 0;
   right: 0;
   margin: 0 auto;
   border-radius: 15px;
-  overflow: hidden;
+  /* overflow: hidden; */
   background-color: ${(props) => props.theme.black.veryDark};
-  letter-spacing: 0.5px;
-  word-spacing: 0.1px;
   line-height: 20px;
   z-index: 10;
+  /* box-sizing: content-box; */
+  margin-bottom: 2rem;
   @media screen and (min-width: 1200px) {
     width: 50vw;
   }
+`;
+const ContentContainer = styled.div`
+  padding: 0 2rem; ;
 `;
 
 const BigCover = styled.div`
@@ -51,6 +60,7 @@ const BigTitle = styled.h3`
 const ContentWrapper = styled.div`
   display: flex;
   padding: 20px;
+  position: relative;
 `;
 const ContentLeft = styled.p`
   /* position: relative; */
@@ -79,6 +89,64 @@ const OverView = styled.p`
   padding-top: 2rem;
   font-size: 13px;
 `;
+const ContentBack = styled.div`
+  background-color: #2e2e2e;
+  height: 22rem;
+  position: relative;
+  border-radius: 0.5rem;
+`;
+const ContentImage = styled.div`
+  padding: 1rem;
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(3, 1fr);
+  position: relative;
+  width: 100%;
+  margin-bottom: 4rem;
+`;
+const Box = styled(motion.div)<{ bgphoto: string }>`
+  position: relative;
+  background-color: white;
+  background-image: url(${(props) => props.bgphoto});
+  background-size: cover;
+  background-position: center center;
+  height: 10rem;
+  border-radius: 5px;
+  cursor: pointer;
+  &:first-child {
+    transform-origin: left center;
+  }
+  &:last-child {
+    transform-origin: right center;
+  }
+`;
+const Info = styled(motion.div)`
+  position: absolute;
+  padding: 10px;
+  width: 100%;
+  h4 {
+    text-align: left;
+    font-weight: 350;
+    padding: 1rem 0 0 0;
+  }
+  p {
+    font-size: 0.8rem;
+  }
+  div {
+    padding: 0.5rem 0;
+  }
+`;
+
+const InfoVariants = {
+  hover: {
+    opacity: 1,
+    transition: {
+      delay: 0.5,
+      duration: 0.3,
+      type: "tween",
+    },
+  },
+};
 
 interface IProps {
   // results: IMovie[];
@@ -90,8 +158,8 @@ function MovieDetail({ titleType }: IProps) {
   const { scrollY } = useScroll();
   const navigate = useNavigate();
   const onOverlayClicked = () => navigate("/");
-
   const bigMovieMatch = useMatch("/movies/:movieId");
+  const [similarData, setsimilarData] = useState<IGetSimilarMovie>();
 
   let params = useParams();
   let id = Number(params.movieId);
@@ -101,12 +169,28 @@ function MovieDetail({ titleType }: IProps) {
     () => getMovieDetail(id),
     { enabled: !!id }
   );
-  console.log(data);
 
-  // const clickedMovie =
-  //   bigMovieMatch?.params.movieId &&
-  //   results.find((movie) => String(movie.id) === bigMovieMatch.params.movieId);
-  // const clickedMovie = results.find((movie) => movie.id === movieId);
+  const { data: similarResults, isLoading: similarIsLoading } =
+    useQuery<IGetSimilarMovie>(
+      ["similar-movies", id],
+      () => getSimilarMovies(id),
+      { enabled: !!id }
+    );
+  useEffect(() => {
+    if (similarResults) {
+      if (similarResults.results.length > 10) {
+        let copy = similarResults;
+        copy.results.splice(9, similarResults.results.length - 1);
+        setsimilarData(copy);
+      } else {
+        setsimilarData(similarResults);
+      }
+    }
+  }, [similarIsLoading]);
+
+  const onBoxClicked = async (id: number) => {
+    navigate(`/movies/${id}`);
+  };
 
   return (
     <>
@@ -131,29 +215,54 @@ function MovieDetail({ titleType }: IProps) {
                           data.backdrop_path,
                           "w500"
                         )})`,
+                        borderRadius: "15px",
                       }}
                     />
-                    <BigTitle>{data.title}</BigTitle>
-                    <ContentWrapper>
-                      <ContentLeft>
-                        <ContentDetail>
-                          <p>{data.release_date.split("-")[0]}</p>
-                          <p>{data.runtime}분</p>
-                          <p>{data.vote_average}별</p>
-                        </ContentDetail>
-                        <OverView>{data.overview}</OverView>
-                      </ContentLeft>
-                      <ContentRight>
-                        <label>장르:</label>
-                        <p>
-                          {data.genres.map((d) =>
-                            d.id === data.genres[data.genres.length - 1].id
-                              ? d.name
-                              : d.name + ", "
-                          )}
-                        </p>
-                      </ContentRight>
-                    </ContentWrapper>
+                    <ContentContainer>
+                      <BigTitle>{data.title}</BigTitle>
+                      <ContentWrapper>
+                        <ContentLeft>
+                          <ContentDetail>
+                            <p>{data.release_date.split("-")[0]}</p>
+                            <p>{data.runtime}분</p>
+                            <p>{data.vote_average}별</p>
+                          </ContentDetail>
+                          <OverView>
+                            {data.overview.slice(0, 300) + "..."}
+                          </OverView>
+                        </ContentLeft>
+                        <ContentRight>
+                          <label>장르:</label>
+                          <p>
+                            {data.genres.map((d) =>
+                              d.id === data.genres[data.genres.length - 1].id
+                                ? d.name
+                                : d.name + ", "
+                            )}
+                          </p>
+                        </ContentRight>
+                      </ContentWrapper>
+                      <ContentImage>
+                        {similarData?.results &&
+                          similarData.results.map((movie) => [
+                            <ContentBack>
+                              <Box
+                                key={movie.id + titleType}
+                                bgphoto={makeImagePath(
+                                  movie.poster_path,
+                                  "w500"
+                                )}
+                                onClick={() => onBoxClicked(movie.id)}
+                              ></Box>
+                              <Info>
+                                <h4>{movie.title}</h4>
+                                <div>{movie.vote_average}</div>
+                                <p>{movie.overview.slice(0, 80) + "..."}</p>
+                              </Info>
+                            </ContentBack>,
+                          ])}
+                      </ContentImage>
+                    </ContentContainer>
                   </>
                 )}
               </BigMovie>

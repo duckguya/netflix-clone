@@ -9,6 +9,7 @@ import MovieDetail from "./MovieDetail";
 
 const TitleType = styled.p`
   font-size: 1.4rem;
+  font-weight: 350;
   padding-bottom: 0.3rem;
 `;
 

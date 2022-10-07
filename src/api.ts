@@ -124,9 +124,32 @@ export interface IGetTvDetail {
   vote_average: number;
   vote_count: number;
 }
+export interface IGetSimilarMovie {
+  dates: { maximum: string; minimum: string };
+  page: number;
+  results: ISimilarMovie[];
+  total_pages: number;
+  total_results: number;
+}
+export interface ISimilarMovie {
+  adult: boolean;
+  backdrop_path: string;
+  genre_ids: object;
+  id: number;
+  original_language: string;
+  original_title: string;
+  overview: string;
+  popularity: number;
+  poster_path: string;
+  release_date: string;
+  title: string;
+  video: boolean;
+  vote_average: number;
+  vote_count: number;
+}
 
 // movie list
-export function getNowPlaying() {
+export async function getNowPlaying() {
   return fetch(
     `${BASE_PATH}/movie/now_playing?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   ).then((response) => response.json());
@@ -186,6 +209,14 @@ export async function getMovieDetail(movieId: number) {
 export async function getTvDetail(tvId: number) {
   const response = await axios.get(
     `${BASE_PATH}/tv/${tvId}?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
+  );
+  return response.data;
+}
+
+// get similar
+export async function getSimilarMovies(movieId: number) {
+  const response = await axios.get(
+    `${BASE_PATH}/movie/${movieId}/similar?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR&page=1`
   );
   return response.data;
 }

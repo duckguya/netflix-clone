@@ -156,7 +156,7 @@ function Header() {
   return (
     <Nav variants={navVariants} animate={navAnimation} initial="top">
       <Col>
-        <Link to={"/  "}>
+        <Link to={"/"}>
           <Logo
             variants={logoVariants}
             initial="normal"

@@ -44,12 +44,14 @@ const Banner = styled.div<{ bgPhoto: string }>`
 `;
 
 const Title = styled.h2`
-  font-size: 4rem;
+  font-size: 3rem;
+  font-weight: 400;
   margin-bottom: 1rem;
   color: white;
 `;
 const Overview = styled.p`
-  font-size: 1.3rem;
+  font-size: 1rem;
+  line-height: 20px;
   width: 50%;
   height: 30%;
   padding-bottom: 3rem;
@@ -100,14 +102,22 @@ function Home() {
           </Banner>
           <SlideWrapper>
             {nowPlaying ? (
-              <MovieList {...nowPlaying} titleType="Now Playing" />
+              <MovieList {...nowPlaying} titleType="현재 상영 중인 영화" />
             ) : (
               ""
             )}
             <Space />
-            {upcoming ? <MovieList {...upcoming} titleType="Up Coming" /> : ""}
+            {topRated ? (
+              <MovieList {...topRated} titleType="가장 인기있는 영화" />
+            ) : (
+              ""
+            )}
             <Space />
-            {topRated ? <MovieList {...topRated} titleType="Top Rated" /> : ""}
+            {upcoming ? (
+              <MovieList {...upcoming} titleType="개봉 예정 영화" />
+            ) : (
+              ""
+            )}
             <Space />
           </SlideWrapper>
         </>
