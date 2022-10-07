@@ -1,20 +1,14 @@
+/* eslint-disable */
 import { useQuery } from "@tanstack/react-query";
-import {
-  useLocation,
-  useMatch,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { useLocation, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { getTvDetail, IGetTvDetail, ITv } from "../api";
+import { getTvDetail, IGetMovieDetail, ITv } from "../api";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
-import { getNowPlaying, IGetMoviesResult, IMovie } from "../api";
 import { makeImagePath } from "../utils";
 
 const Wrapper = styled.div`
   position: relative;
-  width: 100%;
 `;
 const TitleType = styled.p`
   position: absolute;
@@ -70,13 +64,14 @@ const Info = styled(motion.div)`
 const Overlay = styled(motion.div)`
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
 `;
 
-const BigMovie = styled(motion.div)`
+const TvDetail = styled(motion.div)`
   position: absolute;
   width: 40vw;
   height: 80vh;
@@ -121,18 +116,6 @@ const rowVariants = {
   },
 };
 
-const BackrowVariants = {
-  hidden: {
-    x: -window.outerWidth,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: window.outerWidth,
-  },
-};
-
 const BoxVariants = {
   normal: {
     scale: 1,
@@ -159,44 +142,6 @@ const InfoVariants = {
   },
 };
 
-const BtnOverlayForwardVariants = {
-  hover: {
-    background:
-      "linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))",
-    transition: {
-      type: "tween",
-    },
-  },
-};
-const BtnOverlayBackVariants = {
-  hover: {
-    background:
-      "linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))",
-    transition: {
-      type: "tween",
-    },
-  },
-  hidden: {
-    x: -window.outerWidth,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: window.outerWidth,
-  },
-};
-const BtnVariants = {
-  hover: {
-    scale: 1.2,
-    transition: {
-      type: "tween",
-    },
-  },
-};
-
-const offset = 6;
-
 interface IProps {
   keyword: string;
   results: ITv[];
@@ -205,14 +150,14 @@ interface IProps {
 function SearchMovie({ keyword, results }: IProps) {
   const location = useLocation();
   const tvId = new URLSearchParams(location.search).get("tvId");
-  // let params = useParams();
   const navigate = useNavigate();
-  const bigMovieMatch = useMatch("/search/:tvId");
+  const bigTvMatch = useMatch("/search/:tvId");
   const { scrollY } = useScroll();
 
-  const { data, isLoading } = useQuery<IGetTvDetail>(
-    ["movies", "detail"],
-    async () => await getTvDetail(Number(tvId))
+  const { data, isLoading } = useQuery<IGetMovieDetail>(
+    ["search", tvId],
+    async () => await getTvDetail(Number(tvId)),
+    { enabled: !!tvId }
   );
 
   const [index, setIndex] = useState(0);
@@ -222,18 +167,18 @@ function SearchMovie({ keyword, results }: IProps) {
     setLeaving((prev) => !prev);
   };
 
-  const onBoxClicked = (movieId: number) => {
-    navigate(`/search?keyword=${keyword}&movieId=${movieId}`);
+  const onBoxClicked = (tvId: number) => {
+    navigate(`/search?keyword=${keyword}&tvId=${tvId}`);
   };
 
   const onOverlayClicked = () => navigate(`/search?keyword=${keyword}`);
-  const clickedMovie =
-    bigMovieMatch?.params.tvId &&
-    results?.find((movie) => String(movie.id) === bigMovieMatch.params.tvId);
+  const clickedTv =
+    bigTvMatch?.params.tvId &&
+    results?.find((tv) => String(tv.id) === bigTvMatch.params.tvId);
 
   return (
     <Wrapper>
-      <TitleType>Movie</TitleType>
+      <TitleType>Tv</TitleType>
       {/* 컴포넌트가 처음 마운트 될 때 animation이 실행되지 않게 한다 */}
       <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
         <Row
@@ -249,19 +194,19 @@ function SearchMovie({ keyword, results }: IProps) {
               .slice(1)
               // .slice(offset * index, offset * index + offset)
               .filter((m) => m.backdrop_path)
-              .map((tvId) => (
+              .map((tv) => (
                 <Box
-                  layoutId={tvId.id + ""}
-                  key={tvId.id}
+                  layoutId={tv.id + ""}
+                  key={tv.id}
                   variants={BoxVariants}
                   initial="normal"
                   whileHover="hover"
                   transition={{ type: "tween" }}
-                  bgphoto={makeImagePath(tvId.backdrop_path, "w500")}
-                  onClick={() => onBoxClicked(tvId.id)}
+                  bgphoto={makeImagePath(tv.backdrop_path, "w500")}
+                  onClick={() => onBoxClicked(tv.id)}
                 >
                   <Info variants={InfoVariants}>
-                    <h4>{tvId.name}</h4>
+                    <h4>{tv.name}</h4>
                   </Info>
                 </Box>
 
@@ -277,7 +222,7 @@ function SearchMovie({ keyword, results }: IProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
-            <BigMovie style={{ top: scrollY.get() + 100 }} layoutId={tvId}>
+            <TvDetail style={{ top: scrollY.get() - 200 }} layoutId={tvId}>
               {data && (
                 <>
                   <BigCover
@@ -288,11 +233,11 @@ function SearchMovie({ keyword, results }: IProps) {
                       )})`,
                     }}
                   />
-                  <BigTitle>{data.name}</BigTitle>
+                  <BigTitle>{data.title}</BigTitle>
                   <BigOverView>{data.overview}</BigOverView>
                 </>
               )}
-            </BigMovie>
+            </TvDetail>
           </>
         ) : null}
       </AnimatePresence>

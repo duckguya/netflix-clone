@@ -1,16 +1,9 @@
+/* eslint-disable */
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
-import {
-  getMovieDetail,
-  getNowPlaying,
-  getTvDetail,
-  IGetMovieDetail,
-  IGetMoviesResult,
-  IGetTvDetail,
-  IMovie,
-} from "../api";
+import { getTvDetail, IGetTvDetail } from "../api";
 import { useQuery } from "@tanstack/react-query";
 
 const Overlay = styled(motion.div)`
@@ -32,6 +25,7 @@ const BigMovie = styled(motion.div)`
   border-radius: 15px;
   overflow: hidden;
   background-color: ${(props) => props.theme.black.veryDark};
+  z-index: 10;
 `;
 
 const BigCover = styled.div`
@@ -67,11 +61,10 @@ function TvDetail({ titleType, tvId }: IProps) {
   const bigTvMatch = useMatch("/tv/:tvId");
 
   const { data, isLoading } = useQuery<IGetTvDetail>(
-    ["movies", "detail"],
-    async () => await getTvDetail(tvId)
+    ["movies", tvId],
+    async () => await getTvDetail(tvId),
+    { enabled: !!tvId }
   );
-
-  console.log("bigTvMatch", tvId);
 
   // const clickedMovie =
   //   bigMovieMatch?.params.movieId &&

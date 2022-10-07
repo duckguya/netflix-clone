@@ -1,3 +1,4 @@
+/* eslint-disable */
 import styled from "styled-components";
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { Link, useMatch, useNavigate } from "react-router-dom";

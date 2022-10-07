@@ -1,14 +1,9 @@
+/* eslint-disable */
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useMatch, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
-import {
-  getMovieDetail,
-  getNowPlaying,
-  IGetMovieDetail,
-  IGetMoviesResult,
-  IMovie,
-} from "../api";
+import { getMovieDetail, IGetMovieDetail } from "../api";
 import { useQuery } from "@tanstack/react-query";
 
 const Overlay = styled(motion.div)`
@@ -22,7 +17,7 @@ const Overlay = styled(motion.div)`
 
 const BigMovie = styled(motion.div)`
   position: absolute;
-  width: 40vw;
+  width: 90vw;
   height: 80vh;
   left: 0;
   right: 0;
@@ -30,6 +25,10 @@ const BigMovie = styled(motion.div)`
   border-radius: 15px;
   overflow: hidden;
   background-color: ${(props) => props.theme.black.veryDark};
+  z-index: 10;
+  @media screen and (min-width: 1200px) {
+    width: 50vw;
+  }
 `;
 
 const BigCover = styled.div`

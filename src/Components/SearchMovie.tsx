@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useQuery } from "@tanstack/react-query";
 import {
   useLocation,
@@ -120,18 +121,6 @@ const rowVariants = {
   },
 };
 
-const BackrowVariants = {
-  hidden: {
-    x: -window.outerWidth,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: window.outerWidth,
-  },
-};
-
 const BoxVariants = {
   normal: {
     scale: 1,
@@ -158,42 +147,6 @@ const InfoVariants = {
   },
 };
 
-const BtnOverlayForwardVariants = {
-  hover: {
-    background:
-      "linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))",
-    transition: {
-      type: "tween",
-    },
-  },
-};
-const BtnOverlayBackVariants = {
-  hover: {
-    background:
-      "linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))",
-    transition: {
-      type: "tween",
-    },
-  },
-  hidden: {
-    x: -window.outerWidth,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: window.outerWidth,
-  },
-};
-const BtnVariants = {
-  hover: {
-    scale: 1.2,
-    transition: {
-      type: "tween",
-    },
-  },
-};
-
 const offset = 6;
 
 interface IProps {
@@ -210,8 +163,9 @@ function SearchMovie({ keyword, results }: IProps) {
   const { scrollY } = useScroll();
 
   const { data, isLoading } = useQuery<IGetMovieDetail>(
-    ["search", "detail"],
-    async () => await getMovieDetail(Number(movieId))
+    ["search", movieId],
+    async () => await getMovieDetail(Number(movieId)),
+    { enabled: !!movieId }
   );
 
   const [index, setIndex] = useState(0);

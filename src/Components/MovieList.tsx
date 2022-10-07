@@ -1,15 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { useEffect, useState } from "react";
+/* eslint-disable */
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import {
-  getMovieDetail,
-  getNowPlaying,
-  IGetMovieDetail,
-  IGetMoviesResult,
-  IMovie,
-} from "../api";
+import { IGetMovieDetail, IMovie } from "../api";
 import { makeImagePath } from "../utils";
 import MovieDetail from "./MovieDetail";
 
@@ -235,7 +229,6 @@ function MovieList({ results, titleType }: IProps) {
   };
 
   const onBoxClicked = async (id: number) => {
-    console.log("movieId", id);
     setMovieId(id);
     navigate(`/movies/${id}`);
 
@@ -243,7 +236,6 @@ function MovieList({ results, titleType }: IProps) {
     //   ["movies", "detail"],
     //   async () => await getMovieDetail(movieId)
     // );
-    // console.log(data);
     // setDetailData(data);
   };
 
