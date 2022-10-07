@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useScroll } from "framer-motion";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useMatch, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { makeImagePath } from "../utils";
 import {
@@ -53,23 +53,26 @@ const BigOverView = styled.p`
 `;
 
 interface IProps {
-  results: IMovie[];
+  // results: IMovie[];
   titleType: string;
-  movieId: number;
+  // movieId: number;
 }
 
-function MovieDetail({ titleType, results, movieId }: IProps) {
+function MovieDetail({ titleType }: IProps) {
   const { scrollY } = useScroll();
   const navigate = useNavigate();
   const onOverlayClicked = () => navigate("/");
+
   const bigMovieMatch = useMatch("/movies/:movieId");
 
-  const { data, isLoading } = useQuery<IGetMovieDetail>(
-    ["movies", "detail"],
-    async () => await getMovieDetail(movieId)
-  );
+  let params = useParams();
+  let id = Number(params.movieId);
 
-  console.log("bigMovieMatch", movieId);
+  const { data, isLoading } = useQuery<IGetMovieDetail>(
+    ["movies", id],
+    () => getMovieDetail(id),
+    { enabled: !!id }
+  );
 
   // const clickedMovie =
   //   bigMovieMatch?.params.movieId &&
@@ -86,25 +89,27 @@ function MovieDetail({ titleType, results, movieId }: IProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             />
-            <BigMovie
-              style={{ top: scrollY.get() + 100 }}
-              layoutId={bigMovieMatch.params.movieId + titleType}
-            >
-              {data && (
-                <>
-                  <BigCover
-                    style={{
-                      backgroundImage: `linear-gradient(to top, #141414, transparent), url(${makeImagePath(
-                        data.backdrop_path,
-                        "w500"
-                      )})`,
-                    }}
-                  />
-                  <BigTitle>{data.title}</BigTitle>
-                  <BigOverView>{data.overview}</BigOverView>
-                </>
-              )}
-            </BigMovie>
+            {
+              <BigMovie
+                style={{ top: scrollY.get() + 100 }}
+                layoutId={bigMovieMatch.params.movieId + titleType}
+              >
+                {data && (
+                  <>
+                    <BigCover
+                      style={{
+                        backgroundImage: `linear-gradient(to top, #141414, transparent), url(${makeImagePath(
+                          data.backdrop_path,
+                          "w500"
+                        )})`,
+                      }}
+                    />
+                    <BigTitle>{data.title}</BigTitle>
+                    <BigOverView>{data.overview}</BigOverView>
+                  </>
+                )}
+              </BigMovie>
+            }
           </>
         ) : null}
       </AnimatePresence>

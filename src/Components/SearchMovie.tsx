@@ -214,9 +214,6 @@ function SearchMovie({ keyword, results }: IProps) {
     async () => await getMovieDetail(Number(movieId))
   );
 
-  console.log("movieId", movieId);
-  console.log("location", location);
-
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
 

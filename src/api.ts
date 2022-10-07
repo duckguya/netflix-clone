@@ -175,16 +175,19 @@ export function getTvSearch(keyowrd: string) {
 
 // detail
 export async function getMovieDetail(movieId: number) {
-  console.log("moviId: ", movieId);
+  console.log("api moviId: ", movieId);
   const response = await axios.get(
     `${BASE_PATH}/movie/${movieId}?api_key=${process.env.REACT_APP_API_KEY}`
   );
   return response.data;
+  // return fetch(
+  //   `${BASE_PATH}/movie/${movieId}?api_key=${process.env.REACT_APP_API_KEY}`
+  // ).then((response) => response.json());
 }
 export async function getTvDetail(tvId: number) {
   console.log("tvId: ", tvId);
   const response = await axios.get(
-    `${BASE_PATH}/tv/196572?api_key=${process.env.REACT_APP_API_KEY}`
+    `${BASE_PATH}/tv/${tvId}?api_key=${process.env.REACT_APP_API_KEY}`
   );
   console.log(response.data);
   return response.data;

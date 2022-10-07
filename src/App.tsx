@@ -8,17 +8,16 @@ function App() {
     <HashRouter>
       <Header />
       <Routes>
-        <Route path="/tv" element={<Tv />}>
-          <Route path=":tvId" element={<Tv />} />
-        </Route>
-        <Route path="/search" element={<Search />}>
-          <Route path="/search/:keyword" element={<Search />} />
-          <Route path="/search/:keyword/:movieId" element={<Search />} />
-        </Route>
-        <Route path="/" element={<Home />}>
-          <Route path="netflix-clone" element={<Home />} />
-          <Route path="movies/:movieId" element={<Home />} />
-        </Route>
+        <Route path="/tv" element={<Tv />} />
+        <Route path="/tv/:tvId" element={<Tv />} />
+
+        <Route path="/search" element={<Search />} />
+        <Route path="/search/:keyword" element={<Search />} />
+        <Route path="/search/:keyword/:movieId" element={<Search />} />
+
+        <Route path="/" element={<Home />} />
+        <Route path="/netflix-clone" element={<Home />} />
+        <Route path="/movies/:movieId" element={<Home />} />
       </Routes>
     </HashRouter>
   );

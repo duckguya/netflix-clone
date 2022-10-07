@@ -1,9 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { getNowPlaying, IGetMoviesResult, IMovie } from "../api";
+import {
+  getMovieDetail,
+  getNowPlaying,
+  IGetMovieDetail,
+  IGetMoviesResult,
+  IMovie,
+} from "../api";
 import { makeImagePath } from "../utils";
 import MovieDetail from "./MovieDetail";
 
@@ -180,6 +186,7 @@ interface IProps {
 function MovieList({ results, titleType }: IProps) {
   const navigate = useNavigate();
 
+  const [detailData, setDetailData] = useState<IGetMovieDetail>();
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const bigMovieMatch = useMatch("/movies/:movieId");
@@ -227,9 +234,17 @@ function MovieList({ results, titleType }: IProps) {
     setLeaving((prev) => !prev);
   };
 
-  const onBoxClicked = (movieId: number) => {
-    setMovieId(movieId);
-    navigate(`/movies/${movieId}`);
+  const onBoxClicked = async (id: number) => {
+    console.log("movieId", id);
+    setMovieId(id);
+    navigate(`/movies/${id}`);
+
+    // const { data, isLoading } = useQuery<IGetMovieDetail>(
+    //   ["movies", "detail"],
+    //   async () => await getMovieDetail(movieId)
+    // );
+    // console.log(data);
+    // setDetailData(data);
   };
 
   return (
@@ -305,9 +320,8 @@ function MovieList({ results, titleType }: IProps) {
       </Slider>
       {movieId !== 0 ? (
         <MovieDetail
-          results={results}
+          // result={detailData}
           titleType={titleType}
-          movieId={movieId}
         />
       ) : (
         ""
