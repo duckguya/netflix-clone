@@ -6,7 +6,7 @@ const StarRateWrap = styled.div`
   align-items: center;
   /* width: 50%; */
   /* height: 50%; */
-  padding-right: 0.3rem;
+  /* padding-right: 0.3rem; */
   .star_icon {
     display: inline-flex;
     margin-right: 5px;

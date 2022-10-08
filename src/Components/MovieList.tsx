@@ -1,11 +1,13 @@
 /* eslint-disable */
+import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { IGetMovieDetail, IMovie } from "../api";
+import { getMovieDetail, IGetMovieDetail, IMovie } from "../api";
 import { makeImagePath } from "../utils";
 import MovieDetail from "./MovieDetail";
+import StarRate from "./StarRate";
 
 const TitleType = styled.p`
   font-size: 1.4rem;
@@ -35,6 +37,7 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   background-position: center center;
   height: 12rem;
   border-radius: 5px;
+  overflow: hidden;
   cursor: pointer;
   &:first-child {
     transform-origin: left center;
@@ -73,14 +76,32 @@ const ArrowBtn = styled(motion.div)`
 
 const Info = styled(motion.div)`
   padding: 10px;
-  background-color: ${(props) => props.theme.black.lighter};
+  background-color: ${(props) => props.theme.black.darker};
   opacity: 0;
   position: absolute;
   width: 100%;
   bottom: 0;
+
   h4 {
-    text-align: center;
-    font-size: 18px;
+    text-align: left;
+    font-size: 1rem;
+  }
+`;
+const InfoWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  /* justify-content: space-around; */
+  align-items: center;
+  div {
+    display: flex;
+  }
+`;
+
+const MoreBtn = styled.div`
+  padding-left: 3.5rem;
+
+  &:hover {
+    color: ${(props) => props.theme.black.lighter};
   }
 `;
 
@@ -232,12 +253,6 @@ function MovieList({ results, titleType }: IProps) {
   const onBoxClicked = async (id: number) => {
     setMovieId(id);
     navigate(`/movies/${id}`);
-
-    // const { data, isLoading } = useQuery<IGetMovieDetail>(
-    //   ["movies", "detail"],
-    //   async () => await getMovieDetail(movieId)
-    // );
-    // setDetailData(data);
   };
 
   return (
@@ -268,9 +283,19 @@ function MovieList({ results, titleType }: IProps) {
                     transition={{ type: "tween" }}
                     bgphoto={makeImagePath(movie.backdrop_path, "w500")}
                     onClick={() => onBoxClicked(movie.id)}
+                    // onMouseOver={() => onMouseOver(movie.id)}
                   >
                     <Info variants={InfoVariants}>
                       <h4>{movie.title}</h4>
+                      <InfoWrapper>
+                        <div>
+                          <StarRate rate={movie.vote_average} />
+                          <span>{String(movie.vote_average).slice(0, 3)}</span>
+                        </div>
+                        <MoreBtn className="material-icons">
+                          expand_circle_down
+                        </MoreBtn>
+                      </InfoWrapper>
                     </Info>
                   </Box>
 

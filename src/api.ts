@@ -8,6 +8,9 @@ export interface IMovie {
   poster_path: string;
   title: string;
   overview: string;
+  release_date: string;
+  adult: boolean;
+  vote_average: number;
 }
 
 export interface IGetMoviesResult {
@@ -167,9 +170,11 @@ export interface IGetMovieVideos {
 
 // movie list
 export async function getNowPlaying() {
-  return fetch(
+  const response = await axios.get(
     `${BASE_PATH}/movie/now_playing?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
-  ).then((response) => response.json());
+  );
+  console.log(response.data);
+  return response.data;
 }
 
 export function getUpcoming() {

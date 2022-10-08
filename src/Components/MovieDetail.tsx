@@ -78,7 +78,9 @@ const ContentLeft = styled.div`
 // const ContentLeft = styled.div``;
 const ContentRight = styled.div`
   display: flex;
-  width: 30vw;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  width: 40vw;
   font-size: 14px;
   label {
     color: ${(props) => props.theme.black.lighter};
