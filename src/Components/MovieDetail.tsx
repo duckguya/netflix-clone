@@ -305,8 +305,8 @@ function MovieDetail({ titleType }: IProps) {
                               <Info>
                                 <h4>{movie.title}</h4>
                                 <StarWrapper>
-                                  <StarRate rate={data.vote_average} />
-                                  {String(data.vote_average).slice(0, 3)}
+                                  <StarRate rate={movie.vote_average} />
+                                  {String(movie.vote_average).slice(0, 3)}
                                 </StarWrapper>
                                 <p>
                                   {movie.overview.length > 80

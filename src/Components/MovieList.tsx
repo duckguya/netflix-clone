@@ -35,7 +35,7 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   background-image: url(${(props) => props.bgphoto});
   background-size: cover;
   background-position: center center;
-  height: 12rem;
+  height: 9rem;
   border-radius: 5px;
   overflow: hidden;
   cursor: pointer;
@@ -64,14 +64,19 @@ const BtnOverlay = styled(motion.div)`
 const BtnOverlayBack = styled(BtnOverlay)`
   background: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
   left: 0;
+  height: 9rem;
 `;
 const BtnOverlayForward = styled(BtnOverlay)`
   background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5));
   right: 0;
+  height: 9rem;
 `;
 
 const ArrowBtn = styled(motion.div)`
   color: ${(props) => props.theme.white.darker};
+  &:hover {
+    color: ${(props) => props.theme.white.lighter};
+  }
 `;
 
 const Info = styled(motion.div)`
@@ -163,14 +168,23 @@ const BtnOverlayForwardVariants = {
       type: "tween",
     },
   },
+  hidden: {
+    x: window.outerWidth,
+  },
+  visible: {
+    x: 0,
+  },
+  exit: {
+    x: -window.outerWidth,
+  },
 };
 const BtnOverlayBackVariants = {
   hover: {
     background:
       "linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))",
-    transition: {
-      type: "tween",
-    },
+    // transition: {
+    //   type: "tween",
+    // },
   },
   hidden: {
     x: -window.outerWidth,
@@ -214,8 +228,8 @@ function MovieList({ results, titleType }: IProps) {
     if (results) {
       if (leaving) return;
       toggleLeaving();
-      const totlaMovies = results.length - 1;
-      const maxIndex = Math.floor(totlaMovies / offset) - 1;
+      const totalMovies = results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
       // Math.ceil : 올림처리를 하는 함수. <-> Math.floor()
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
@@ -224,8 +238,8 @@ function MovieList({ results, titleType }: IProps) {
     if (results) {
       if (leaving) return;
       toggleLeaving();
-      const totlaMovies = results.length - 1;
-      const maxIndex = Math.floor(totlaMovies / offset) - 1;
+      const totalMovies = results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
       // Math.ceil : 올림처리를 하는 함수. <-> Math.floor()
       setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
     }
@@ -235,8 +249,8 @@ function MovieList({ results, titleType }: IProps) {
     if (results) {
       if (leaving) return;
       toggleLeaving();
-      const totlaMovies = results.length - 1;
-      const maxIndex = Math.floor(totlaMovies / offset) - 1;
+      const totalMovies = results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
       // Math.ceil : 올림처리를 하는 함수. <-> Math.floor()
       if (arrow === "back") {
         setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
@@ -302,6 +316,7 @@ function MovieList({ results, titleType }: IProps) {
                   // 부모 element에 variants를 가지고있으면 자식요소도 갖게된다.
                 ))}
           </Row>
+
           <BtnOverlayBack
             key={index + 1}
             onClick={() => changeIndex("back")}
@@ -311,6 +326,7 @@ function MovieList({ results, titleType }: IProps) {
             initial="hidden"
             animate="visible"
             exit="exit"
+            transition={{ type: "tween" }}
           >
             <ArrowBtn
               className="material-icons"
@@ -320,11 +336,16 @@ function MovieList({ results, titleType }: IProps) {
               arrow_back_ios
             </ArrowBtn>
           </BtnOverlayBack>
+
           <BtnOverlayForward
             key={index + 2}
             onClick={() => changeIndex("forward")}
             variants={BtnOverlayForwardVariants}
             whileHover="hover"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={{ type: "tween" }}
           >
             <ArrowBtn
               className="material-icons"
