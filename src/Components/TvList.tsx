@@ -214,7 +214,6 @@ const BtnVariants = {
 const offset = 6;
 
 interface IProps {
-  children?: React.ReactNode;
   results: ITv[];
   titleType: string;
 }

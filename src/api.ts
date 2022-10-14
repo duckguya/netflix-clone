@@ -173,7 +173,6 @@ export async function getNowPlaying() {
   const response = await axios.get(
     `${BASE_PATH}/movie/now_playing?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   );
-  console.log(response.data);
   return response.data;
 }
 
@@ -223,7 +222,6 @@ export async function getMovieDetail(movieId: number) {
   const response = await axios.get(
     `${BASE_PATH}/movie/${movieId}?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   );
-  console.log(response.data);
   return response.data;
   // return fetch(
   //   `${BASE_PATH}/movie/${movieId}?api_key=${process.env.REACT_APP_API_KEY}`

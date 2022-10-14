@@ -110,6 +110,24 @@ const MoreBtn = styled.div`
   }
 `;
 
+const rowVariants2 = {
+  hidden: (direction: number) => ({
+    x: direction > 0 ? window.outerWidth : -window.outerWidth,
+  }),
+  // hidden: {
+  //   x: window.outerWidth,
+  // },
+  visible: {
+    x: 0,
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? -window.outerWidth : window.outerWidth,
+  }),
+  // exit: {
+  //   x: -window.outerWidth,
+  // },
+};
+
 const rowVariants = {
   hidden: {
     x: window.outerWidth,
@@ -119,18 +137,6 @@ const rowVariants = {
   },
   exit: {
     x: -window.outerWidth,
-  },
-};
-
-const BackrowVariants = {
-  hidden: {
-    x: -window.outerWidth,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: window.outerWidth,
   },
 };
 
@@ -168,15 +174,6 @@ const BtnOverlayForwardVariants = {
       type: "tween",
     },
   },
-  hidden: {
-    x: window.outerWidth,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: -window.outerWidth,
-  },
 };
 const BtnOverlayBackVariants = {
   hover: {
@@ -185,15 +182,6 @@ const BtnOverlayBackVariants = {
     // transition: {
     //   type: "tween",
     // },
-  },
-  hidden: {
-    x: -window.outerWidth,
-  },
-  visible: {
-    x: 0,
-  },
-  exit: {
-    x: window.outerWidth,
   },
 };
 const BtnVariants = {
@@ -215,48 +203,36 @@ interface IProps {
 
 function MovieList({ results, titleType }: IProps) {
   const navigate = useNavigate();
-
-  const [detailData, setDetailData] = useState<IGetMovieDetail>();
-  const [index, setIndex] = useState(0);
+  const [[index, direction], setIndex] = useState([0, 0]);
+  // const [index, setIndex] = useState(0);
+  // const [direction, setDirection] = useState(true);
   const [leaving, setLeaving] = useState(false);
   const bigMovieMatch = useMatch("/movies/:movieId");
   const [movieId, setMovieId] = useState(
     Number(bigMovieMatch?.params.movieId) | 0
   );
 
-  const increaseIndex = () => {
+  const changeIndex = (newDirection: number) => {
     if (results) {
       if (leaving) return;
       toggleLeaving();
       const totalMovies = results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
       // Math.ceil : 올림처리를 하는 함수. <-> Math.floor()
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
-    }
-  };
-  const decreaseIndex = () => {
-    if (results) {
-      if (leaving) return;
-      toggleLeaving();
-      const totalMovies = results.length - 1;
-      const maxIndex = Math.floor(totalMovies / offset) - 1;
-      // Math.ceil : 올림처리를 하는 함수. <-> Math.floor()
-      setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
-    }
-  };
-
-  const changeIndex = (arrow: string) => {
-    if (results) {
-      if (leaving) return;
-      toggleLeaving();
-      const totalMovies = results.length - 1;
-      const maxIndex = Math.floor(totalMovies / offset) - 1;
-      // Math.ceil : 올림처리를 하는 함수. <-> Math.floor()
-      if (arrow === "back") {
-        setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+      console.log(index, newDirection, maxIndex);
+      if (newDirection === 1 && index === maxIndex) {
+        setIndex([0, newDirection]);
+      } else if (newDirection === -1 && index === 0) {
+        setIndex([maxIndex, newDirection]);
       } else {
-        setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+        setIndex([index + newDirection, newDirection]);
       }
+
+      // if (arrow === "back") {
+      //   setIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
+      // } else {
+      //   setIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
+      // }
     }
   };
 
@@ -274,7 +250,12 @@ function MovieList({ results, titleType }: IProps) {
       <Slider>
         <TitleType>{titleType}</TitleType>
         {/* 컴포넌트가 처음 마운트 될 때 animation이 실행되지 않게 한다 */}
-        <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+        <AnimatePresence
+          initial={false}
+          onExitComplete={toggleLeaving}
+          custom={direction}
+        >
+          {/* onExitComplete : exit이 끝나면 실행된다 */}
           <Row
             variants={rowVariants}
             initial="hidden"
@@ -319,7 +300,7 @@ function MovieList({ results, titleType }: IProps) {
 
           <BtnOverlayBack
             key={index + 1}
-            onClick={() => changeIndex("back")}
+            onClick={() => changeIndex(-1)}
             // onClick={increaseIndex}
             variants={BtnOverlayBackVariants}
             whileHover="hover"
@@ -339,7 +320,7 @@ function MovieList({ results, titleType }: IProps) {
 
           <BtnOverlayForward
             key={index + 2}
-            onClick={() => changeIndex("forward")}
+            onClick={() => changeIndex(1)}
             variants={BtnOverlayForwardVariants}
             whileHover="hover"
             initial="hidden"
