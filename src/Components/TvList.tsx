@@ -220,7 +220,7 @@ interface IProps {
 
 function TvList({ results, titleType }: IProps) {
   const navigate = useNavigate();
-
+  console.log(results);
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const bigTvMatch = useMatch("/tv/:tvId");

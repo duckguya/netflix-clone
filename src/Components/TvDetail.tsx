@@ -55,6 +55,7 @@ interface IProps {
 }
 
 function TvDetail({ titleType, tvId }: IProps) {
+  console.log("tvdetail");
   const { scrollY } = useScroll();
   const navigate = useNavigate();
   const onOverlayClicked = () => navigate("/tv");

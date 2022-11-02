@@ -9,6 +9,7 @@ import {
 import { makeImagePath } from "../utils";
 import MovieList from "../Components/MovieList";
 import TvList from "../Components/TvList";
+import ContentList from "../Components/ContentList";
 
 const Wrapper = styled.div`
   /* background: ${(props) => props.theme.black.veryDark}; */
@@ -96,15 +97,20 @@ function Tv() {
           </Banner>
           <SlideWrapper>
             {airingData ? (
-              <TvList {...airingData} titleType="Airing Today" />
+              <ContentList {...airingData} titleType="Airing Today" type="tv" />
             ) : (
               ""
             )}
-            <Space />
-            {popularData ? <TvList {...popularData} titleType="Popular" /> : ""}
-            <Space />
-            {ratedData ? <TvList {...ratedData} titleType="Top Rated" /> : ""}
-            <Space />
+            {popularData ? (
+              <ContentList {...popularData} titleType="Popular" type="tv" />
+            ) : (
+              ""
+            )}
+            {ratedData ? (
+              <ContentList {...ratedData} titleType="Top Rated" type="tv" />
+            ) : (
+              ""
+            )}
           </SlideWrapper>
         </>
       )}

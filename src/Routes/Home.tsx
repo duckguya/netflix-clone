@@ -12,6 +12,7 @@ import {
 import { makeImagePath } from "../utils";
 import MovieList from "../Components/MovieList";
 import Slider from "react-slick";
+import ContentList from "../Components/ContentList";
 
 const Wrapper = styled.div`
   /* background: ${(props) => props.theme.black.veryDark}; */
@@ -109,17 +110,29 @@ function Home() {
           </Banner>
           <SlideWrapper>
             {nowPlaying ? (
-              <MovieList {...nowPlaying} titleType="현재 상영 중인 영화" />
+              <ContentList
+                {...nowPlaying}
+                titleType="현재 상영 중인 영화"
+                type="movie"
+              />
             ) : (
               ""
             )}
             {topRated ? (
-              <MovieList {...topRated} titleType="가장 인기있는 영화" />
+              <ContentList
+                {...topRated}
+                titleType="가장 인기있는 영화"
+                type="movie"
+              />
             ) : (
               ""
             )}
             {upcoming ? (
-              <MovieList {...upcoming} titleType="개봉 예정 영화" />
+              <ContentList
+                {...upcoming}
+                titleType="개봉 예정 영화"
+                type="movie"
+              />
             ) : (
               ""
             )}

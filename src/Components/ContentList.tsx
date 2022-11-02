@@ -3,30 +3,50 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { getMovieDetail, IGetMovieDetail, IMovie } from "../api";
+import {
+  getMovieDetail,
+  getTvDetail,
+  IGetMovieDetail,
+  IGetTvDetail,
+  IMovie,
+} from "../api";
 import { makeImagePath } from "../utils";
 import MovieDetail from "./MovieDetail";
 import StarRate from "./StarRate";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import TvDetail from "./TvDetail";
+import ContentDetail from "./ContentDetail";
+import { useQuery } from "@tanstack/react-query";
 
 interface IProps {
   children?: React.ReactNode;
   results: IMovie[];
   titleType: string;
+  type: string;
 }
 
-function MovieList({ results, titleType }: IProps) {
+function ContentList({ results, titleType, type }: IProps) {
   const navigate = useNavigate();
-  const bigMovieMatch = useMatch("/movies/:movieId");
-  const [movieId, setMovieId] = useState(
-    Number(bigMovieMatch?.params.movieId) | 0
-  );
+  const movieMatch = useMatch("/movies/:movieId");
+  const tvMatch = useMatch("/tv/:tvId");
+
+  //   const [contentId, setContentId] = useState(
+  //     movieMatch
+  //       ? Number(movieMatch?.params.movieId)
+  //       : tvMatch
+  //       ? Number(tvMatch?.params.tvId)
+  //       : 0
+  //   );
+
+  //   const [contentId, setContentId] = useState(
+  //     Number(movieMatch?.params.movieId) | 0
+  //   );
 
   const onBoxClicked = async (id: number) => {
-    setMovieId(id);
-    navigate(`/movies/${id}`);
+    // setContentId(id);
+    navigate(`${type === "movie" ? "/movies/" : "/tv/"}${id}`);
   };
 
   const settings = {
@@ -37,6 +57,21 @@ function MovieList({ results, titleType }: IProps) {
     slidesToScroll: 6,
   };
 
+  // detail data
+  const contentId = Number(
+    movieMatch ? movieMatch?.params.movieId : tvMatch?.params.tvId
+  );
+  const { data: movieData, isLoading: movieIsLoading } =
+    useQuery<IGetMovieDetail>(
+      ["movies", contentId],
+      async () => await getMovieDetail(contentId),
+      { enabled: !!contentId }
+    );
+  const { data: tvData, isLoading: tvIsLoading } = useQuery<IGetTvDetail>(
+    ["movies", contentId],
+    async () => await getTvDetail(contentId),
+    { enabled: !!contentId }
+  );
   return (
     <>
       <Container>
@@ -46,24 +81,24 @@ function MovieList({ results, titleType }: IProps) {
             results
               .slice(1)
               // .slice(offset * index, offset * index + offset)
-              .map((movie) => (
+              .map((content) => (
                 <Box
                   id="Box"
-                  layoutId={movie.id + titleType}
-                  key={movie.id + titleType}
+                  layoutId={content.id + titleType}
+                  key={content.id + titleType}
                   variants={BoxVariants}
                   initial="normal"
                   whileHover="hover"
                   transition={{ type: "tween" }}
-                  bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-                  onClick={() => onBoxClicked(movie.id)}
+                  bgphoto={makeImagePath(content.backdrop_path, "w500")}
+                  onClick={() => onBoxClicked(content.id)}
                 >
                   <Info variants={InfoVariants}>
-                    <h4>{movie.title}</h4>
+                    <h4>{type === "movie" ? content.title : content.name}</h4>
                     <InfoWrapper>
                       <div>
-                        <StarRate rate={movie.vote_average} />
-                        <span>{String(movie.vote_average).slice(0, 3)}</span>
+                        <StarRate rate={content.vote_average} />
+                        <span>{String(content.vote_average).slice(0, 3)}</span>
                       </div>
                       <MoreBtn className="material-icons">
                         expand_circle_down
@@ -74,11 +109,12 @@ function MovieList({ results, titleType }: IProps) {
               ))}
         </Slider>
       </Container>
-      {movieId !== 0 ? (
-        <MovieDetail
-          // result={detailData}
-          titleType={titleType}
-        />
+      {type === "movie" ? (
+        movieData ? (
+          <ContentDetail data={movieData} type={"movie"} />
+        ) : (
+          ""
+        )
       ) : (
         ""
       )}
@@ -107,7 +143,7 @@ const Container = styled.div`
     overflow: hidden;
     border-radius: 5px;
     background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
-    right: 25px;
+    right: -23px;
     height: 9rem;
     top: -65px;
   }
@@ -120,7 +156,7 @@ const Container = styled.div`
     overflow: hidden;
     border-radius: 5px;
     background: linear-gradient(to left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
-    left: 0px;
+    left: -48px;
     height: 9.2rem;
     top: 72px;
   }
@@ -199,4 +235,4 @@ const InfoVariants = {
   },
 };
 
-export default MovieList;
+export default ContentList;

@@ -11,14 +11,13 @@ export class IContent {
   backdrop_path!: string;
   name!: string;
   overview!: string;
-}
-
-export class IMovie extends IContent {
+  vote_average!: number;
   title!: string;
   release_date!: string;
   adult!: boolean;
-  vote_average!: number;
 }
+
+export class IMovie extends IContent {}
 export class ITv extends IContent {}
 
 export interface IGetMoviesResult {
