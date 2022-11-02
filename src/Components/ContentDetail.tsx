@@ -25,6 +25,7 @@ interface IProps {
 }
 
 function ContentDetail({ data, type }: IProps) {
+  console.log("type", type);
   console.log("detail data", data);
   const { scrollY } = useScroll();
   const navigate = useNavigate();

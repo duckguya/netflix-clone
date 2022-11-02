@@ -109,9 +109,20 @@ function ContentList({ results, titleType, type }: IProps) {
               ))}
         </Slider>
       </Container>
+
+      {/* detail */}
       {type === "movie" ? (
         movieData ? (
           <ContentDetail data={movieData} type={"movie"} />
+        ) : (
+          ""
+        )
+      ) : (
+        ""
+      )}
+      {type === "tv" ? (
+        tvData ? (
+          <ContentDetail data={tvData} type={"tv"} />
         ) : (
           ""
         )
