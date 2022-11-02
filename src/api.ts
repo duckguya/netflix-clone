@@ -1,17 +1,25 @@
 import axios from "axios";
 
 const BASE_PATH = "https://api.themoviedb.org/3";
+const KEY = process.env.REACT_APP_API_KEY;
 
-export interface IMovie {
-  id: number;
-  backdrop_path: string;
-  poster_path: string;
-  title: string;
-  overview: string;
-  release_date: string;
-  adult: boolean;
-  vote_average: number;
+axios.defaults.baseURL = BASE_PATH;
+
+export class IContent {
+  id!: number;
+  poster_path!: string;
+  backdrop_path!: string;
+  name!: string;
+  overview!: string;
 }
+
+export class IMovie extends IContent {
+  title!: string;
+  release_date!: string;
+  adult!: boolean;
+  vote_average!: number;
+}
+export class ITv extends IContent {}
 
 export interface IGetMoviesResult {
   dates: { maximum: string; minimum: string };
@@ -19,14 +27,6 @@ export interface IGetMoviesResult {
   results: IMovie[];
   total_pages: number;
   total_results: number;
-}
-
-export interface ITv {
-  id: number;
-  poster_path: string;
-  backdrop_path: string;
-  name: string;
-  overview: string;
 }
 
 export interface IGetTvResult {
@@ -173,6 +173,7 @@ export async function getNowPlaying() {
   const response = await axios.get(
     `${BASE_PATH}/movie/now_playing?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   );
+
   return response.data;
 }
 
@@ -206,10 +207,18 @@ export function getTvTopRated() {
 }
 
 // search
-export function getMovieSearch(keyowrd: string) {
-  return fetch(
+export async function getMovieSearch(keyowrd: string) {
+  const response = await axios.get(
     `${BASE_PATH}/search/movie?api_key=${process.env.REACT_APP_API_KEY}&query=${keyowrd}&language=ko-KR`
-  ).then((response) => response.json());
+  );
+
+  return {
+    ...response.data,
+    results: response.data.results.map((x: any) => ({
+      ...x,
+      name: x.title,
+    })),
+  };
 }
 export function getTvSearch(keyowrd: string) {
   return fetch(
@@ -243,9 +252,9 @@ export async function getSimilarMovies(movieId: number) {
 }
 
 // get videos
-export async function getMovieVideos(id: number) {
+export const getMovieVideos = async (id: number) => {
   const response = await axios.get(
     `${BASE_PATH}/movie/${id}/videos?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   );
   return response.data;
-}
+};

@@ -7,6 +7,7 @@ import App from "./App";
 import { createGlobalStyle } from "styled-components";
 import { ThemeProvider } from "styled-components";
 import { theme } from "./theme";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

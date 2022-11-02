@@ -11,6 +11,7 @@ import {
 } from "../api";
 import { makeImagePath } from "../utils";
 import MovieList from "../Components/MovieList";
+import Slider from "react-slick";
 
 const Wrapper = styled.div`
   /* background: ${(props) => props.theme.black.veryDark}; */
@@ -87,7 +88,13 @@ function Home() {
       ["movies", "top_rated"],
       async () => await getTopRated()
     );
-
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
   return (
     <Wrapper>
       {comingLoading ? (
@@ -106,19 +113,16 @@ function Home() {
             ) : (
               ""
             )}
-            <Space />
             {topRated ? (
               <MovieList {...topRated} titleType="가장 인기있는 영화" />
             ) : (
               ""
             )}
-            <Space />
             {upcoming ? (
               <MovieList {...upcoming} titleType="개봉 예정 영화" />
             ) : (
               ""
             )}
-            <Space />
           </SlideWrapper>
         </>
       )}

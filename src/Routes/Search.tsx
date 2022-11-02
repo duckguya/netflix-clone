@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import {
@@ -13,6 +13,79 @@ import { getNowPlaying, IGetMoviesResult, IMovie } from "../api";
 import { makeImagePath } from "../utils";
 import SearchMovie from "../Components/SearchMovie";
 import SearchTv from "../Components/SearchTv";
+import Skeleton from "react-loading-skeleton";
+import { ContentSkeleton } from "../Components/ContentSkeleton";
+
+/*
+const useMe = () => {
+  const { data: me } = useQuery('/me', {
+    refetchOnMount: false,
+  });
+  return me;
+}
+*/
+
+function Search() {
+  const location = useLocation();
+  const keyword = new URLSearchParams(location.search).get("keyword");
+  const queryClient = useQueryClient();
+
+  //  const me = useMe();
+
+  const {
+    data: movies,
+    isLoading: moviesLoading,
+    isError: isErrorMovie,
+  } = useQuery<IGetMoviewSearch>(["search", "movies", keyword], () =>
+    getMovieSearch(keyword || "")
+  );
+  const {
+    data: tvs,
+    isLoading: tvsLoading,
+    isError: isErrorTv,
+  } = useQuery<IGetTvSearch>(["search", "tvs", keyword], () =>
+    getTvSearch(keyword || "")
+  );
+
+  let state = "ok";
+  if (isErrorTv || isErrorMovie) {
+    state = "error";
+  } else if (tvsLoading || moviesLoading) {
+    state = "loading";
+  }
+
+  const onRetry = () => {
+    queryClient.refetchQueries(["search"]);
+  };
+
+  return (
+    <Wrapper>
+      <TitleType>'{keyword}'</TitleType>
+
+      {state === "error" && (
+        <div>
+          에러가 발생했습니다. 다시 시도할까요?
+          <button onClick={onRetry}>재시도</button>
+        </div>
+      )}
+      {state === "loading" && (
+        <LoadingContainer>
+          {[...new Array(3)].map((_, index) => (
+            <ContentSkeleton key={index} />
+          ))}
+        </LoadingContainer>
+      )}
+      {state === "ok" && (
+        <>
+          {movies ? <SearchMovie {...movies} keyword={keyword || ""} /> : ""}
+          <Space />
+          {tvs ? <SearchTv {...tvs} keyword={keyword || ""} /> : ""}
+        </>
+      )}
+    </Wrapper>
+  );
+}
+
 const Wrapper = styled.div`
   background: ${(props) => props.theme.black.veryDark};
   margin-top: 10rem;
@@ -33,43 +106,17 @@ const TitleType = styled.p`
   padding-bottom: 5rem;
 `;
 
-const Loader = styled.div`
-  height: 20vw;
-  font-size: 3rem;
+const LoadingContainer = styled.div`
+  width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  padding: 0px 100px;
 `;
 const Space = styled.div`
   margin: 3rem 0;
 `;
 
-function Search() {
-  const location = useLocation();
-  const keyword = new URLSearchParams(location.search).get("keyword");
-
-  const { data: movies, isLoading: moviesLoading } = useQuery<IGetMoviewSearch>(
-    ["search", "movies"],
-    () => getMovieSearch(keyword || "")
-  );
-  const { data: tvs, isLoading: tvsLoading } = useQuery<IGetTvSearch>(
-    ["search", "tvs"],
-    () => getTvSearch(keyword || "")
-  );
-
-  return (
-    <Wrapper>
-      {moviesLoading ? (
-        <Loader>Loading...</Loader>
-      ) : (
-        <>
-          <TitleType>'{keyword}'</TitleType>
-          {movies ? <SearchMovie {...movies} keyword={keyword || ""} /> : ""}
-          <Space />
-          {tvs ? <SearchTv {...tvs} keyword={keyword || ""} /> : ""}
-        </>
-      )}
-    </Wrapper>
-  );
-}
 export default Search;

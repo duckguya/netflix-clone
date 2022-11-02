@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { DefaultTheme } from "styled-components";
 
 export const theme: DefaultTheme = {
