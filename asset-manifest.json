@@ -1,6 +1,7 @@
 {
   "files": {
-    "main.js": "/netflix-clone/static/js/main.317e57a5.js",
+    "main.css": "/netflix-clone/static/css/main.c4e27a80.css",
+    "main.js": "/netflix-clone/static/js/main.1c619aca.js",
     "reactPlayerYouTube.js": "/netflix-clone/static/js/reactPlayerYouTube.b2c299df.chunk.js",
     "reactPlayerSoundCloud.js": "/netflix-clone/static/js/reactPlayerSoundCloud.d8dbf129.chunk.js",
     "reactPlayerVimeo.js": "/netflix-clone/static/js/reactPlayerVimeo.92bafc75.chunk.js",
@@ -14,8 +15,13 @@
     "reactPlayerKaltura.js": "/netflix-clone/static/js/reactPlayerKaltura.2d5a5fd9.chunk.js",
     "reactPlayerFilePlayer.js": "/netflix-clone/static/js/reactPlayerFilePlayer.ee42a0a0.chunk.js",
     "reactPlayerPreview.js": "/netflix-clone/static/js/reactPlayerPreview.b921c688.chunk.js",
+    "static/media/slick.svg": "/netflix-clone/static/media/slick.2630a3e3eab21c607e21.svg",
+    "static/media/slick.eot": "/netflix-clone/static/media/slick.a4e97f5a2a64f0ab1323.eot",
+    "static/media/slick.ttf": "/netflix-clone/static/media/slick.c94f7671dcc99dce43e2.ttf",
+    "static/media/slick.woff": "/netflix-clone/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/netflix-clone/index.html",
-    "main.317e57a5.js.map": "/netflix-clone/static/js/main.317e57a5.js.map",
+    "main.c4e27a80.css.map": "/netflix-clone/static/css/main.c4e27a80.css.map",
+    "main.1c619aca.js.map": "/netflix-clone/static/js/main.1c619aca.js.map",
     "reactPlayerYouTube.b2c299df.chunk.js.map": "/netflix-clone/static/js/reactPlayerYouTube.b2c299df.chunk.js.map",
     "reactPlayerSoundCloud.d8dbf129.chunk.js.map": "/netflix-clone/static/js/reactPlayerSoundCloud.d8dbf129.chunk.js.map",
     "reactPlayerVimeo.92bafc75.chunk.js.map": "/netflix-clone/static/js/reactPlayerVimeo.92bafc75.chunk.js.map",
@@ -31,6 +37,7 @@
     "reactPlayerPreview.b921c688.chunk.js.map": "/netflix-clone/static/js/reactPlayerPreview.b921c688.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.317e57a5.js"
+    "static/css/main.c4e27a80.css",
+    "static/js/main.1c619aca.js"
   ]
 }
