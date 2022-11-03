@@ -9,7 +9,7 @@ import {
   getUpcoming,
   IGetMoviesResult,
 } from "../api";
-import { makeImagePath } from "../utils";
+import { makeImagePath } from "../utils/makeImagePath";
 import MovieList from "../Components/MovieList";
 import Slider from "react-slick";
 import ContentList from "../Components/ContentList";

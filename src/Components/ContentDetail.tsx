@@ -2,43 +2,40 @@
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useMatch, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { makeImagePath } from "../utils";
+import { makeImagePath } from "../utils/makeImagePath";
 import {
-  getMovieDetail,
   getMovieVideos,
   getSimilarMovies,
+  getTvVideos,
   IGetMovieDetail,
-  IGetMovieVideos,
+  IGetVideos,
   IGetSimilarMovie,
+  getSimilarTvs,
 } from "../api";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import ReactPlayer from "react-player/lazy";
 import StarRate from "./StarRate";
-import { type } from "@testing-library/user-event/dist/type";
+import { Player } from "./Player";
+import SimilarContents from "./SimilarContents";
 
 interface IProps {
   children?: React.ReactNode;
   data: IGetMovieDetail;
   type: string;
-  // movieId: number;
 }
 
 function ContentDetail({ data, type }: IProps) {
-  console.log("type", type);
-  console.log("detail data", data);
   const { scrollY } = useScroll();
   const navigate = useNavigate();
-  //   const onOverlayClicked = () => navigate("/");
+
   const onOverlayClicked = () => {
-    console.log("type", type);
     if (type === "movie") {
       navigate("/");
     } else {
       navigate("/tv");
     }
   };
-  const bigMovieMatch = useMatch("/movies/:movieId");
+
   const movieMatch = useMatch("/movies/:movieId");
   const tvMatch = useMatch("/tv/:tvId");
   const contentId = movieMatch
@@ -47,38 +44,62 @@ function ContentDetail({ data, type }: IProps) {
   const [similarData, setsimilarData] = useState<IGetSimilarMovie>();
 
   let params = useParams();
-  let id = Number(params.movieId);
-  //   const { data, isLoading } = useQuery<IGetMovieDetail>(
-  //     ["movies", id],
-  //     () => getMovieDetail(id),
-  //     { enabled: !!id }
-  //   );
+  let movieId = Number(params.movieId);
+  let tvId = Number(params.tvId);
 
-  const { data: videos, isLoading: videosIsLoading } =
-    useQuery<IGetMovieVideos>(["videos", id], () => getMovieVideos(id), {
-      enabled: !!id,
-    });
-  const { data: similarResults, isLoading: similarIsLoading } =
-    useQuery<IGetSimilarMovie>(
-      ["similar-movies", id],
-      () => getSimilarMovies(id),
-      { enabled: !!id }
+  const { data: movieVideos, isLoading: movieVideosIsLoading } =
+    useQuery<IGetVideos>(
+      ["movie_videos", movieId],
+      () => getMovieVideos(movieId),
+      {
+        enabled: !!movieId,
+      }
     );
+  const { data: tvVideos, isLoading: tvVideosIsLoading } = useQuery<IGetVideos>(
+    ["tv_videos", tvId],
+    () => getTvVideos(tvId),
+    {
+      enabled: !!tvId,
+    }
+  );
+
+  // 비슷한 컨텐츠
+  const { data: similarMovieResults, isLoading: similarMovieIsLoading } =
+    useQuery<IGetSimilarMovie>(
+      ["similar-movies", movieId],
+      () => getSimilarMovies(movieId),
+      { enabled: !!movieId }
+    );
+  const { data: similarTvResults, isLoading: similarTvIsLoading } =
+    useQuery<IGetSimilarMovie>(
+      ["similar-tvs", tvId],
+      () => getSimilarTvs(tvId),
+      { enabled: !!tvId }
+    );
+
   useEffect(() => {
-    if (similarResults) {
-      if (similarResults.results.length > 10) {
-        let copy = similarResults;
-        copy.results.splice(9, similarResults.results.length - 1);
+    if (similarMovieResults) {
+      if (similarMovieResults.results.length > 10) {
+        let copy = similarMovieResults;
+        copy.results.splice(9, similarMovieResults.results.length - 1);
         setsimilarData(copy);
       } else {
-        setsimilarData(similarResults);
+        setsimilarData(similarMovieResults);
       }
     }
-  }, [similarIsLoading]);
+  }, [similarMovieIsLoading]);
 
-  const onBoxClicked = async (id: number) => {
-    navigate(`/movies/${id}`);
-  };
+  useEffect(() => {
+    if (similarTvResults) {
+      if (similarTvResults.results.length > 10) {
+        let copy = similarTvResults;
+        copy.results.splice(9, similarTvResults.results.length - 1);
+        setsimilarData(copy);
+      } else {
+        setsimilarData(similarTvResults);
+      }
+    }
+  }, [similarTvIsLoading]);
 
   return (
     <>
@@ -97,21 +118,23 @@ function ContentDetail({ data, type }: IProps) {
               >
                 {data && (
                   <>
-                    {videos?.results &&
-                      (videos?.results.length > 0 ? (
-                        <ReactPlayer
-                          className="react-player"
-                          url={`https://www.youtube.com/embed/${videos?.results[0].key}?autoplay=1`}
-                          // poster={makeImagePath(data.backdrop_path, "w500")}
-                          width="100%"
-                          height="50%"
-                          playing={true}
-                          muted={false}
-                          // volume={0.5}
-                          light={true}
-                          controls={false}
-                          // style={{ borderRadius: "15px" }}
-                        ></ReactPlayer>
+                    {movieVideos &&
+                      (movieVideos?.results.length > 0 ? (
+                        <Player videos={movieVideos} />
+                      ) : (
+                        <Cover
+                          style={{
+                            backgroundImage: `linear-gradient(to top, #141414, transparent), url(${makeImagePath(
+                              data.backdrop_path,
+                              "w500"
+                            )})`,
+                            borderRadius: "15px",
+                          }}
+                        />
+                      ))}
+                    {tvVideos &&
+                      (tvVideos?.results.length > 0 ? (
+                        <Player videos={tvVideos} />
                       ) : (
                         <Cover
                           style={{
@@ -125,12 +148,18 @@ function ContentDetail({ data, type }: IProps) {
                       ))}
 
                     <ContentContainer>
-                      <Title>{data.title}</Title>
+                      <Title>{type === "movie" ? data.title : data.name}</Title>
                       <ContentWrapper>
                         <ContentLeft>
                           <Detail>
-                            <p>{data.release_date.split("-")[0]}</p>
-                            <p>{data.runtime}분</p>
+                            {type === "movie" ? (
+                              <p> {data.release_date.split("-")[0]}</p>
+                            ) : (
+                              <p>
+                                {data.first_air_date} ~ {data.last_air_date}
+                              </p>
+                            )}
+                            {type === "movie" ? <p> {data.runtime} 분</p> : ""}
                             <StarRate rate={data.vote_average} />
                             {String(data.vote_average).slice(0, 3)}
                           </Detail>
@@ -142,6 +171,7 @@ function ContentDetail({ data, type }: IProps) {
                         </ContentLeft>
                         <ContentRight>
                           <label>장르&nbsp;:&nbsp;</label>
+
                           {data.genres.map((d) =>
                             d.id === data.genres[data.genres.length - 1].id ? (
                               <p key={d.id}>{d.name}</p>
@@ -153,31 +183,12 @@ function ContentDetail({ data, type }: IProps) {
                       </ContentWrapper>
                       <SubTitle>비슷한 콘텐츠</SubTitle>
                       <ContentImage>
-                        {similarData?.results &&
-                          similarData.results.map((movie) => [
-                            <ContentBack key={movie.id}>
-                              <Box
-                                key={movie.id + type}
-                                bgphoto={makeImagePath(
-                                  movie.poster_path,
-                                  "w500"
-                                )}
-                                onClick={() => onBoxClicked(movie.id)}
-                              ></Box>
-                              <Info>
-                                <h4>{movie.title}</h4>
-                                <StarWrapper>
-                                  <StarRate rate={movie.vote_average} />
-                                  {String(movie.vote_average).slice(0, 3)}
-                                </StarWrapper>
-                                <p>
-                                  {movie.overview.length > 80
-                                    ? movie.overview.slice(0, 80)
-                                    : ""}
-                                </p>
-                              </Info>
-                            </ContentBack>,
-                          ])}
+                        {similarData && (
+                          <SimilarContents
+                            similarData={similarData}
+                            type={type}
+                          />
+                        )}
                       </ContentImage>
                     </ContentContainer>
                   </>
@@ -276,12 +287,7 @@ const OverView = styled.p`
   font-size: 14px;
   line-height: 1.5rem;
 `;
-const ContentBack = styled.div`
-  background-color: #2e2e2e;
-  height: 22rem;
-  position: relative;
-  border-radius: 0.5rem;
-`;
+
 const ContentImage = styled.div`
   display: grid;
   gap: 1.2rem;
@@ -291,48 +297,10 @@ const ContentImage = styled.div`
   margin-bottom: 4rem;
 `;
 
-const Box = styled(motion.div)<{ bgphoto: string }>`
-  position: relative;
-  background-color: white;
-  background-image: url(${(props) => props.bgphoto});
-  background-size: cover;
-  background-position: center center;
-  height: 10rem;
-  border-radius: 5px;
-  cursor: pointer;
-  &:first-child {
-    transform-origin: left center;
-  }
-  &:last-child {
-    transform-origin: right center;
-  }
-`;
-const Info = styled(motion.div)`
-  position: absolute;
-  padding: 10px;
-  width: 100%;
-  h4 {
-    text-align: left;
-    font-weight: 350;
-    padding: 1rem 0 0 0;
-  }
-  p {
-    font-size: 0.8rem;
-  }
-  /* div {
-    padding: 0.5rem 0;
-  } */
-`;
 const SubTitle = styled.p`
   font-size: 1.4rem;
   font-weight: 350;
   padding: 3rem 0 1rem 0;
-`;
-
-const StarWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 0.5rem 0;
 `;
 
 const InfoVariants = {

@@ -1,6 +1,5 @@
 /* eslint-disable */
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import {
@@ -10,13 +9,11 @@ import {
   IGetTvDetail,
   IMovie,
 } from "../api";
-import { makeImagePath } from "../utils";
-import MovieDetail from "./MovieDetail";
+import { makeImagePath } from "../utils/makeImagePath";
 import StarRate from "./StarRate";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import TvDetail from "./TvDetail";
 import ContentDetail from "./ContentDetail";
 import { useQuery } from "@tanstack/react-query";
 
@@ -31,18 +28,6 @@ function ContentList({ results, titleType, type }: IProps) {
   const navigate = useNavigate();
   const movieMatch = useMatch("/movies/:movieId");
   const tvMatch = useMatch("/tv/:tvId");
-
-  //   const [contentId, setContentId] = useState(
-  //     movieMatch
-  //       ? Number(movieMatch?.params.movieId)
-  //       : tvMatch
-  //       ? Number(tvMatch?.params.tvId)
-  //       : 0
-  //   );
-
-  //   const [contentId, setContentId] = useState(
-  //     Number(movieMatch?.params.movieId) | 0
-  //   );
 
   const onBoxClicked = async (id: number) => {
     // setContentId(id);
@@ -68,7 +53,7 @@ function ContentList({ results, titleType, type }: IProps) {
       { enabled: !!contentId }
     );
   const { data: tvData, isLoading: tvIsLoading } = useQuery<IGetTvDetail>(
-    ["movies", contentId],
+    ["tvs", contentId],
     async () => await getTvDetail(contentId),
     { enabled: !!contentId }
   );

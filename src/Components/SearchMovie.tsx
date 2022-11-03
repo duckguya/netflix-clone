@@ -11,7 +11,7 @@ import { getMovieDetail, IGetMovieDetail } from "../api";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
 import { IMovie } from "../api";
-import { makeImagePath } from "../utils";
+import { makeImagePath } from "../utils/makeImagePath";
 import SearchGridItems from "./SearchGridItems";
 
 interface IProps {

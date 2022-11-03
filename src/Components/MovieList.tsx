@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { getMovieDetail, IGetMovieDetail, IMovie } from "../api";
-import { makeImagePath } from "../utils";
+import { makeImagePath } from "../utils/makeImagePath";
 import MovieDetail from "./MovieDetail";
 import StarRate from "./StarRate";
 import Slider from "react-slick";

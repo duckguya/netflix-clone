@@ -2,13 +2,13 @@
 import { AnimatePresence, motion, useScroll } from "framer-motion";
 import { useMatch, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { makeImagePath } from "../utils";
+import { makeImagePath } from "../utils/makeImagePath";
 import {
   getMovieDetail,
   getMovieVideos,
   getSimilarMovies,
   IGetMovieDetail,
-  IGetMovieVideos,
+  IGetVideos,
   IGetSimilarMovie,
 } from "../api";
 import { useQuery } from "@tanstack/react-query";
@@ -192,10 +192,13 @@ function MovieDetail({ titleType }: IProps) {
     () => getMovieDetail(id),
     { enabled: !!id }
   );
-  const { data: videos, isLoading: videosIsLoading } =
-    useQuery<IGetMovieVideos>(["videos", id], () => getMovieVideos(id), {
+  const { data: videos, isLoading: videosIsLoading } = useQuery<IGetVideos>(
+    ["videos", id],
+    () => getMovieVideos(id),
+    {
       enabled: !!id,
-    });
+    }
+  );
   const { data: similarResults, isLoading: similarIsLoading } =
     useQuery<IGetSimilarMovie>(
       ["similar-movies", id],

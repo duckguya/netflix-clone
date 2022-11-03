@@ -10,7 +10,7 @@ import {
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useState } from "react";
 import { getNowPlaying, IGetMoviesResult, IMovie } from "../api";
-import { makeImagePath } from "../utils";
+import { makeImagePath } from "../utils/makeImagePath";
 import SearchMovie from "../Components/SearchMovie";
 import SearchTv from "../Components/SearchTv";
 import Skeleton from "react-loading-skeleton";

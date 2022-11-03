@@ -11,7 +11,7 @@ import styled from "styled-components";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 
 import { IMovie, getMovieDetail, IContent, IGetMovieDetail } from "../api";
-import { makeImagePath } from "../utils";
+import { makeImagePath } from "../utils/makeImagePath";
 
 interface IProps {
   title: string;

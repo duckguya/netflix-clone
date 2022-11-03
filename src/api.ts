@@ -74,9 +74,12 @@ class IContentDetail {
   status!: string;
   tagline!: string;
   title!: string;
+  name!: string;
   video!: boolean;
   vote_average!: number;
   vote_count!: number;
+  first_air_date!: string;
+  last_air_date!: string;
 }
 
 export interface IGetMovieDetail extends IContentDetail {}
@@ -99,27 +102,28 @@ export interface IGetTvDetail extends IContentDetail {
   type: string;
 }
 export interface IGetSimilarMovie {
-  dates: { maximum: string; minimum: string };
+  // dates: { maximum: string; minimum: string };
   page: number;
   results: ISimilarMovie[];
   total_pages: number;
   total_results: number;
 }
-export interface ISimilarMovie {
-  adult: boolean;
-  backdrop_path: string;
-  genre_ids: object;
-  id: number;
-  original_language: string;
-  original_title: string;
-  overview: string;
-  popularity: number;
-  poster_path: string;
-  release_date: string;
-  title: string;
-  video: boolean;
-  vote_average: number;
-  vote_count: number;
+export class ISimilarMovie {
+  adult!: boolean;
+  backdrop_path!: string;
+  genre_ids!: object;
+  id!: number;
+  original_language!: string;
+  original_title!: string;
+  overview!: string;
+  popularity!: number;
+  poster_path!: string;
+  release_date!: string;
+  title!: string;
+  name!: string;
+  video!: boolean;
+  vote_average!: number;
+  vote_count!: number;
 }
 
 interface IVideos {
@@ -134,7 +138,7 @@ interface IVideos {
   published_at: string;
   id: string;
 }
-export interface IGetMovieVideos {
+export interface IGetVideos {
   id: number;
   results: IVideos[];
 }
@@ -221,11 +225,23 @@ export async function getSimilarMovies(movieId: number) {
   );
   return response.data;
 }
+export async function getSimilarTvs(movieId: number) {
+  const response = await axios.get(
+    `${BASE_PATH}/tv/${movieId}/similar?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR&page=1`
+  );
+  return response.data;
+}
 
 // get videos
 export const getMovieVideos = async (id: number) => {
   const response = await axios.get(
     `${BASE_PATH}/movie/${id}/videos?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
+  );
+  return response.data;
+};
+export const getTvVideos = async (id: number) => {
+  const response = await axios.get(
+    `${BASE_PATH}/tv/${id}/videos?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   );
   return response.data;
 };

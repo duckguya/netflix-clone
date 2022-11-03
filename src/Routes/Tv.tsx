@@ -6,9 +6,7 @@ import {
   getTvTopRated,
   IGetTvResult,
 } from "../api";
-import { makeImagePath } from "../utils";
-import MovieList from "../Components/MovieList";
-import TvList from "../Components/TvList";
+import { makeImagePath } from "../utils/makeImagePath";
 import ContentList from "../Components/ContentList";
 
 const Wrapper = styled.div`
