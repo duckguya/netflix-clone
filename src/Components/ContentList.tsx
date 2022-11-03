@@ -16,6 +16,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import ContentDetail from "./ContentDetail";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface IProps {
   children?: React.ReactNode;
@@ -28,18 +29,57 @@ function ContentList({ results, titleType, type }: IProps) {
   const navigate = useNavigate();
   const movieMatch = useMatch("/movies/:movieId");
   const tvMatch = useMatch("/tv/:tvId");
+  const [isArrow, setIsArrow] = useState(0);
 
   const onBoxClicked = async (id: number) => {
     // setContentId(id);
     navigate(`${type === "movie" ? "/movies/" : "/tv/"}${id}`);
   };
 
+  /*
+  function SampleNextArrow(props: any) {
+    const { className, style, onClick } = props;
+    return (
+      // <div
+      //   className={className}
+      //   style={{ ...style, display: "block", background: "red" }}
+      //   onClick={onClick}
+      // />
+      <div
+        className="material-icons"
+        style={{
+          ...style,
+          display: "block",
+          background: "red",
+          position: "absolute",
+          padding: "0px 20px",
+          // display: 'flex',
+          margin: "auto",
+          alignItems: " center",
+          overflow: "hidden",
+          borderRadius: " 5px",
+          backgroundColor:
+            "linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8))",
+          right: "-23px",
+          height: "9rem",
+          top: "-65px",
+        }}
+        onClick={onClick}
+        // variants={BtnVariants}
+        // whileHover="hover"
+      >
+        arrow_forward_ios
+      </div>
+    );
+  }
+ */
   const settings = {
     dots: false,
     infinite: false,
     speed: 1000,
     slidesToShow: 6,
     slidesToScroll: 6,
+    // nextArrow: <SampleNextArrow />,
   };
 
   // detail data
@@ -57,9 +97,10 @@ function ContentList({ results, titleType, type }: IProps) {
     async () => await getTvDetail(contentId),
     { enabled: !!contentId }
   );
+
   return (
     <>
-      <Container>
+      <Container arrow={isArrow}>
         <TitleType>{titleType}</TitleType>
         <Slider {...settings}>
           {results &&
@@ -124,10 +165,13 @@ const TitleType = styled.p`
   padding-bottom: 0.3rem;
 `;
 
-const Container = styled.div`
+const Container = styled.div<{ arrow: number }>`
   position: relative;
   top: -100px;
   margin: 3rem;
+  .slick-slide {
+    padding: 0 3px;
+  }
   .slick-list {
     overflow: visible;
   }
@@ -155,6 +199,7 @@ const Container = styled.div`
     left: -48px;
     height: 9.2rem;
     top: 72px;
+    /* opacity: ${(props) => props.arrow}; */
   }
 `;
 

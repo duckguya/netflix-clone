@@ -12,6 +12,8 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 
 import { IMovie, getMovieDetail, IContent, IGetMovieDetail } from "../api";
 import { makeImagePath } from "../utils/makeImagePath";
+import { useDetailMovie } from "../Query/Queries";
+import ContentDetail from "./ContentDetail";
 
 interface IProps {
   title: string;
@@ -20,6 +22,8 @@ interface IProps {
 }
 
 const SearchGridItems = ({ title, results, onBoxClicked }: IProps) => {
+  const { data: movieData, isLoading: movieIsLoading } = useDetailMovie(840756);
+
   return (
     <Wrapper>
       <TitleType>{title}</TitleType>
@@ -51,8 +55,9 @@ const SearchGridItems = ({ title, results, onBoxClicked }: IProps) => {
               ))}
         </Row>
       </AnimatePresence>
+      {movieData ? <ContentDetail data={movieData} type={"movie"} /> : ""}
+      {/*
       <AnimatePresence>
-        {/*
         {movieId ? (
           <>
             <Overlay
@@ -78,8 +83,8 @@ const SearchGridItems = ({ title, results, onBoxClicked }: IProps) => {
             </BigMovie>
           </>
         ) : null}
-                */}
       </AnimatePresence>
+                */}
     </Wrapper>
   );
 };

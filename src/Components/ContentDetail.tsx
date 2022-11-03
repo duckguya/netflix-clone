@@ -46,6 +46,8 @@ function ContentDetail({ data, type }: IProps) {
   let params = useParams();
   let movieId = Number(params.movieId);
   let tvId = Number(params.tvId);
+  console.log("movieId: ", movieId);
+  console.log("tvId: ", tvId);
 
   const { data: movieVideos, isLoading: movieVideosIsLoading } =
     useQuery<IGetVideos>(
