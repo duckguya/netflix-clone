@@ -1,5 +1,10 @@
 /* eslint-disable */
-import { useLocation, useMatch, useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useMatch,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { useScroll } from "framer-motion";
 import { IMovie } from "../api";
 import SearchGridItems from "./SearchGridItems";

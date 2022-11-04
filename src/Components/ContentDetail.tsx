@@ -1,6 +1,11 @@
 /* eslint-disable */
 import { AnimatePresence, motion, useScroll } from "framer-motion";
-import { useMatch, useNavigate, useParams } from "react-router-dom";
+import {
+  useLocation,
+  useMatch,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import styled from "styled-components";
 import { makeImagePath } from "../utils/makeImagePath";
 import {
@@ -30,6 +35,24 @@ function ContentDetail({ data, type, category, keyword }: IProps) {
   const { scrollY } = useScroll();
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const typeName = type === "movie" ? "movieId" : "tvId";
+  const searchContentId = new URLSearchParams(location.search).get(typeName);
+  const movieMatch = useMatch("/movies/:movieId");
+  const tvMatch = useMatch("/tv/:tvId");
+  const [similarData, setsimilarData] = useState<IGetSimilarMovie>();
+
+  let contentId = 0;
+  if (movieMatch) {
+    contentId = Number(movieMatch.params.movieId);
+  }
+  if (tvMatch) {
+    contentId = Number(tvMatch?.params.tvId);
+  }
+  if (searchContentId) {
+    contentId = Number(searchContentId);
+  }
+
   const onOverlayClicked = () => {
     if (category === "movie") {
       navigate("/");
@@ -40,46 +63,35 @@ function ContentDetail({ data, type, category, keyword }: IProps) {
     }
   };
 
-  const movieMatch = useMatch("/movies/:movieId");
-  const tvMatch = useMatch("/tv/:tvId");
-  const contentId = movieMatch
-    ? movieMatch.params.movieId
-    : tvMatch?.params.tvId;
-  const [similarData, setsimilarData] = useState<IGetSimilarMovie>();
-
-  let params = useParams();
-  let movieId = Number(params.movieId);
-  let tvId = Number(params.tvId);
-
   // video
   const { data: movieVideos, isLoading: movieVideosIsLoading } =
     useQuery<IGetVideos>(
-      ["movie_videos", movieId],
-      () => getMovieVideos(movieId),
+      ["movie_videos", contentId],
+      () => getMovieVideos(contentId),
       {
-        enabled: !!movieId,
+        enabled: !!contentId,
       }
     );
   const { data: tvVideos, isLoading: tvVideosIsLoading } = useQuery<IGetVideos>(
-    ["tv_videos", tvId],
-    () => getTvVideos(tvId),
+    ["tv_videos", contentId],
+    () => getTvVideos(contentId),
     {
-      enabled: !!tvId,
+      enabled: !!contentId,
     }
   );
 
   // 비슷한 컨텐츠
   const { data: similarMovieResults, isLoading: similarMovieIsLoading } =
     useQuery<IGetSimilarMovie>(
-      ["similar_movies", movieId],
-      () => getSimilarMovies(movieId),
-      { enabled: !!movieId }
+      ["similar_movies", contentId],
+      () => getSimilarMovies(contentId),
+      { enabled: !!contentId }
     );
   const { data: similarTvResults, isLoading: similarTvIsLoading } =
     useQuery<IGetSimilarMovie>(
-      ["similar_tvs", tvId],
-      () => getSimilarTvs(tvId),
-      { enabled: !!tvId }
+      ["similar_tvs", contentId],
+      () => getSimilarTvs(contentId),
+      { enabled: !!contentId }
     );
 
   useEffect(() => {
