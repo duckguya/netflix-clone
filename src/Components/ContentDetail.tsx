@@ -46,9 +46,8 @@ function ContentDetail({ data, type }: IProps) {
   let params = useParams();
   let movieId = Number(params.movieId);
   let tvId = Number(params.tvId);
-  console.log("movieId: ", movieId);
-  console.log("tvId: ", tvId);
 
+  // video
   const { data: movieVideos, isLoading: movieVideosIsLoading } =
     useQuery<IGetVideos>(
       ["movie_videos", movieId],
@@ -68,13 +67,13 @@ function ContentDetail({ data, type }: IProps) {
   // 비슷한 컨텐츠
   const { data: similarMovieResults, isLoading: similarMovieIsLoading } =
     useQuery<IGetSimilarMovie>(
-      ["similar-movies", movieId],
+      ["similar_movies", movieId],
       () => getSimilarMovies(movieId),
       { enabled: !!movieId }
     );
   const { data: similarTvResults, isLoading: similarTvIsLoading } =
     useQuery<IGetSimilarMovie>(
-      ["similar-tvs", tvId],
+      ["similar_tvs", tvId],
       () => getSimilarTvs(tvId),
       { enabled: !!tvId }
     );
@@ -102,6 +101,7 @@ function ContentDetail({ data, type }: IProps) {
       }
     }
   }, [similarTvIsLoading]);
+
 
   return (
     <>

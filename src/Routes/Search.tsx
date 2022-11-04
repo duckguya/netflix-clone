@@ -15,6 +15,7 @@ import SearchMovie from "../Components/SearchMovie";
 import SearchTv from "../Components/SearchTv";
 import Skeleton from "react-loading-skeleton";
 import { ContentSkeleton } from "../Components/ContentSkeleton";
+import SearchContents from "../Components/SearchContents";
 
 /*
 const useMe = () => {
@@ -77,9 +78,21 @@ function Search() {
       )}
       {state === "ok" && (
         <>
-          {movies ? <SearchMovie {...movies} keyword={keyword || ""} /> : ""}
+          {movies ? (
+            <SearchContents
+              {...movies}
+              type={"movie"}
+              keyword={keyword || ""}
+            />
+          ) : (
+            ""
+          )}
           <Space />
-          {tvs ? <SearchTv {...tvs} keyword={keyword || ""} /> : ""}
+          {tvs ? (
+            <SearchContents {...tvs} type={"tv"} keyword={keyword || ""} />
+          ) : (
+            ""
+          )}
         </>
       )}
     </Wrapper>

@@ -43,7 +43,7 @@ function SearchMovie({ keyword, results }: IProps) {
     results?.find((tv) => String(tv.id) === bigTvMatch.params.tvId);
 
   return (
-    <SearchGridItems title="Tv" results={results} onBoxClicked={onBoxClicked} />
+    <SearchGridItems type="Tv" results={results} onBoxClicked={onBoxClicked} />
   );
 }
 export default SearchMovie;

@@ -1,18 +1,10 @@
 /* eslint-disable */
-import { useQuery } from "@tanstack/react-query";
-import {
-  useLocation,
-  useMatch,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-import styled from "styled-components";
-import { getMovieDetail, IGetMovieDetail } from "../api";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { useState } from "react";
+import { useLocation, useMatch, useNavigate } from "react-router-dom";
+import { useScroll } from "framer-motion";
 import { IMovie } from "../api";
-import { makeImagePath } from "../utils/makeImagePath";
 import SearchGridItems from "./SearchGridItems";
+import ContentDetail from "./ContentDetail";
+import { useDetailMovie, useDetailTv } from "../Query/Queries";
 
 interface IProps {
   keyword: string;
@@ -22,39 +14,32 @@ interface IProps {
 function SearchMovie({ keyword, results }: IProps) {
   const location = useLocation();
   const movieId = new URLSearchParams(location.search).get("movieId");
+  const tvId = new URLSearchParams(location.search).get("tvId");
   // let params = useParams();
   const navigate = useNavigate();
   const bigMovieMatch = useMatch("/search/:movieId");
   const { scrollY } = useScroll();
 
-  const { data, isLoading } = useQuery<IGetMovieDetail>(
-    ["search", movieId],
-    async () => await getMovieDetail(Number(movieId)),
-    { enabled: !!movieId }
-  );
-
-  const [index, setIndex] = useState(0);
-  const [leaving, setLeaving] = useState(false);
-
-  const toggleLeaving = () => {
-    setLeaving((prev) => !prev);
-  };
-
   const onBoxClicked = (movieId: number) => {
     navigate(`/search?keyword=${keyword}&movieId=${movieId}`);
   };
 
-  const onOverlayClicked = () => navigate(`/search?keyword=${keyword}`);
-  const clickedMovie =
-    bigMovieMatch?.params.movieId &&
-    results?.find((movie) => String(movie.id) === bigMovieMatch.params.movieId);
+  // detail data
+  const { data: movieData, isLoading: movieIsLoading } = useDetailMovie(
+    Number(movieId)
+  );
+  const { data: tvData, isLoading: tvIsLoading } = useDetailTv(Number(tvId));
 
   return (
-    <SearchGridItems
-      title="Movie"
-      results={results}
-      onBoxClicked={onBoxClicked}
-    />
+    <>
+      <SearchGridItems
+        type="Movie"
+        results={results}
+        onBoxClicked={onBoxClicked}
+      />
+      {movieData ? <ContentDetail data={movieData} type={"movie"} /> : ""}
+      {tvData ? <ContentDetail data={tvData} type={"tv"} /> : ""}
+    </>
   );
 }
 export default SearchMovie;

@@ -16,17 +16,16 @@ import { useDetailMovie } from "../Query/Queries";
 import ContentDetail from "./ContentDetail";
 
 interface IProps {
-  title: string;
+  type: string;
   results: IContent[];
   onBoxClicked: (id: number) => void;
 }
 
-const SearchGridItems = ({ title, results, onBoxClicked }: IProps) => {
-  const { data: movieData, isLoading: movieIsLoading } = useDetailMovie(840756);
-
+const SearchGridItems = ({ type, results, onBoxClicked }: IProps) => {
+  console.log("results", results);
   return (
     <Wrapper>
-      <TitleType>{title}</TitleType>
+      <TitleType>{type === "movie" ? "Movie" : "Tv"}</TitleType>
       {/* 컴포넌트가 처음 마운트 될 때 animation이 실행되지 않게 한다 */}
       <AnimatePresence initial={false} onExitComplete={() => {}}>
         <Row variants={rowVariants} key={0}>
@@ -55,7 +54,7 @@ const SearchGridItems = ({ title, results, onBoxClicked }: IProps) => {
               ))}
         </Row>
       </AnimatePresence>
-      {movieData ? <ContentDetail data={movieData} type={"movie"} /> : ""}
+      {/* {movieData ? <ContentDetail data={movieData} type={"movie"} /> : ""} */}
       {/*
       <AnimatePresence>
         {movieId ? (

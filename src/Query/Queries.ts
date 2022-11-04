@@ -5,6 +5,8 @@ import {
   getMovieSearch,
   IGetMovieDetail,
   getMovieDetail,
+  IGetTvDetail,
+  getTvDetail,
 } from "../api";
 
 /*
@@ -18,6 +20,14 @@ export const useDetailMovie = (contentId: number) => {
   return useQuery<IGetMovieDetail>(
     ["movies", contentId],
     async () => await getMovieDetail(contentId),
+    { enabled: !!contentId }
+  );
+};
+
+export const useDetailTv = (contentId: number) => {
+  return useQuery<IGetTvDetail>(
+    ["tvs", contentId],
+    async () => await getTvDetail(contentId),
     { enabled: !!contentId }
   );
 };
