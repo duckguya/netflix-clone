@@ -37,8 +37,16 @@ function SearchMovie({ keyword, results }: IProps) {
         results={results}
         onBoxClicked={onBoxClicked}
       />
-      {movieData ? <ContentDetail data={movieData} type={"movie"} /> : ""}
-      {tvData ? <ContentDetail data={tvData} type={"tv"} /> : ""}
+      {movieData ? (
+        <ContentDetail data={movieData} type={"movie"} category={"search"} />
+      ) : (
+        ""
+      )}
+      {tvData ? (
+        <ContentDetail data={tvData} type={"tv"} category={"search"} />
+      ) : (
+        ""
+      )}
     </>
   );
 }

@@ -229,7 +229,7 @@ function MovieList({ results, titleType }: IProps) {
   //   const imgTest = document.getElementById("Box");
   //   imgTest.onload = () => {
   //     const isLoaded = imageTest.complete && imageTest.naturalHeight !== 0;
-  //     console.log(isLoaded);
+  //     (isLoaded);
   //   };
   //   var img = document.querySelector("#test");
   //   img.addEventListener("load", function () {
@@ -245,7 +245,6 @@ function MovieList({ results, titleType }: IProps) {
       const totalMovies = results.length - 1;
       const maxIndex = Math.floor(totalMovies / offset) - 1;
       // Math.ceil : 올림처리를 하는 함수. <-> Math.floor()
-      console.log(index, newDirection, maxIndex);
       if (newDirection === 1 && index === maxIndex) {
         setIndex([0, newDirection]);
       } else if (newDirection === -1 && index === 0) {

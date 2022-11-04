@@ -22,17 +22,21 @@ interface IProps {
   children?: React.ReactNode;
   data: IGetMovieDetail;
   type: string;
+  category: string;
+  keyword?: string;
 }
 
-function ContentDetail({ data, type }: IProps) {
+function ContentDetail({ data, type, category, keyword }: IProps) {
   const { scrollY } = useScroll();
   const navigate = useNavigate();
 
   const onOverlayClicked = () => {
-    if (type === "movie") {
+    if (category === "movie") {
       navigate("/");
-    } else {
+    } else if (category === "tv") {
       navigate("/tv");
+    } else if (category === "search") {
+      navigate(`/search?keyword=${keyword}`);
     }
   };
 
@@ -101,7 +105,6 @@ function ContentDetail({ data, type }: IProps) {
       }
     }
   }, [similarTvIsLoading]);
-
 
   return (
     <>

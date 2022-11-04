@@ -139,7 +139,7 @@ function ContentList({ results, titleType, type }: IProps) {
       {/* detail */}
       {type === "movie" ? (
         movieData ? (
-          <ContentDetail data={movieData} type={"movie"} />
+          <ContentDetail data={movieData} type={"movie"} category={"movie"} />
         ) : (
           ""
         )
@@ -148,7 +148,7 @@ function ContentList({ results, titleType, type }: IProps) {
       )}
       {type === "tv" ? (
         tvData ? (
-          <ContentDetail data={tvData} type={"tv"} />
+          <ContentDetail data={tvData} type={"tv"} category={"tv"} />
         ) : (
           ""
         )

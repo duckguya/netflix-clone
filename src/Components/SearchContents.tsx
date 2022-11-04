@@ -33,9 +33,6 @@ function SearchContents({ keyword, results, type }: IProps) {
     Number(contentId)
   );
 
-  console.log("movieData", movieData);
-  console.log("tvData", tvData);
-
   return (
     <>
       <SearchGridItems
@@ -45,7 +42,12 @@ function SearchContents({ keyword, results, type }: IProps) {
       />
       {type === "movie" ? (
         movieData ? (
-          <ContentDetail data={movieData} type={type} />
+          <ContentDetail
+            data={movieData}
+            type={type}
+            category={"search"}
+            keyword={keyword}
+          />
         ) : (
           ""
         )
@@ -54,7 +56,12 @@ function SearchContents({ keyword, results, type }: IProps) {
       )}
       {type === "tv" ? (
         tvData ? (
-          <ContentDetail data={tvData} type={type} />
+          <ContentDetail
+            data={tvData}
+            type={type}
+            category={"search"}
+            keyword={keyword}
+          />
         ) : (
           ""
         )

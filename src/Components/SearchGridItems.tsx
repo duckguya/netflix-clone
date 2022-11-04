@@ -22,7 +22,6 @@ interface IProps {
 }
 
 const SearchGridItems = ({ type, results, onBoxClicked }: IProps) => {
-  console.log("results", results);
   return (
     <Wrapper>
       <TitleType>{type === "movie" ? "Movie" : "Tv"}</TitleType>
