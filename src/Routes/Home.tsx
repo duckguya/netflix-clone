@@ -1,7 +1,4 @@
-import { useQueries, useQuery } from "@tanstack/react-query";
-import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { useState } from "react";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 import {
   getNowPlaying,
@@ -10,8 +7,6 @@ import {
   IGetMoviesResult,
 } from "../api";
 import { makeImagePath } from "../utils/makeImagePath";
-import MovieList from "../Components/MovieList";
-import Slider from "react-slick";
 import ContentList from "../Components/ContentList";
 
 const Wrapper = styled.div`
