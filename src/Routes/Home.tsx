@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 import {
   getNowPlaying,
@@ -8,6 +8,105 @@ import {
 } from "../api";
 import { makeImagePath } from "../utils/makeImagePath";
 import ContentList from "../Components/ContentList";
+import { ContentSkeleton } from "../Components/ContentSkeleton";
+
+function Home() {
+  const queryClient = useQueryClient();
+
+  const {
+    data: nowPlaying,
+    isLoading: isLoadingNow,
+    isError: isErrorNow,
+  } = useQuery<IGetMoviesResult>(["movies", "now_playing"], getNowPlaying);
+  const {
+    data: upcoming,
+    isLoading: isLoadingComing,
+    error: isErrorComing,
+  } = useQuery<IGetMoviesResult>(
+    ["movies", "up_coming"],
+    async () => await getUpcoming()
+  );
+  const {
+    data: topRated,
+    isLoading: isLoadingTopRated,
+    isError: isErrorTopRated,
+  } = useQuery<IGetMoviesResult>(
+    ["movies", "top_rated"],
+    async () => await getTopRated()
+  );
+
+  let state = "ok";
+  if (isLoadingNow || isLoadingComing || isLoadingTopRated) {
+    state = "loading";
+  } else if (isErrorNow || isErrorComing || isErrorTopRated) {
+    state = "error";
+  }
+
+  const onRetry = () => {
+    queryClient.refetchQueries(["search"]);
+  };
+
+  return (
+    <Wrapper>
+      {state === "error" && (
+        <div>
+          에러가 발생했습니다. 다시 시도할까요?
+          <button onClick={onRetry}>재시도</button>
+        </div>
+      )}
+      {state === "loading" && (
+        <LoadingContainer>
+          <ContentSkeleton />
+        </LoadingContainer>
+      )}
+
+      {state === "ok" && (
+        <>
+          <Banner
+            bgPhoto={makeImagePath(nowPlaying?.results[0].backdrop_path || "")}
+          >
+            <Title>{nowPlaying?.results[0].title}</Title>
+            <Overview>
+              {nowPlaying?.results[0].overview &&
+              nowPlaying?.results[0].overview.length > 100
+                ? nowPlaying.results[0].overview.slice(0, 200) + "..."
+                : nowPlaying?.results[0].overview}
+            </Overview>
+          </Banner>
+          <SlideWrapper>
+            {nowPlaying ? (
+              <ContentList
+                {...nowPlaying}
+                titleType="현재 상영 중인 영화"
+                type="movie"
+              />
+            ) : (
+              ""
+            )}
+            {topRated ? (
+              <ContentList
+                {...topRated}
+                titleType="가장 인기있는 영화"
+                type="movie"
+              />
+            ) : (
+              ""
+            )}
+            {upcoming ? (
+              <ContentList
+                {...upcoming}
+                titleType="개봉 예정 영화"
+                type="movie"
+              />
+            ) : (
+              ""
+            )}
+          </SlideWrapper>
+        </>
+      )}
+    </Wrapper>
+  );
+}
 
 const Wrapper = styled.div`
   /* background: ${(props) => props.theme.black.veryDark}; */
@@ -63,78 +162,12 @@ const SlideWrapper = styled.div`
 const Space = styled.div`
   margin: 5rem 0;
 `;
+const LoadingContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0px 38px;
+`;
 
-function Home() {
-  const {
-    data: nowPlaying,
-    isLoading: nowLoading,
-    error: nowError,
-  } = useQuery<IGetMoviesResult>(["movies", "now_playing"], getNowPlaying);
-
-  const {
-    data: upcoming,
-    isLoading: comingLoading,
-    error: comingError,
-  } = useQuery<IGetMoviesResult>(
-    ["movies", "up_coming"],
-    async () => await getUpcoming()
-  );
-  const { data: topRated, isLoading: topRatedLoading } =
-    useQuery<IGetMoviesResult>(
-      ["movies", "top_rated"],
-      async () => await getTopRated()
-    );
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  };
-  return (
-    <Wrapper>
-      {comingLoading ? (
-        <Loader>Loading...</Loader>
-      ) : (
-        <>
-          <Banner
-            bgPhoto={makeImagePath(nowPlaying?.results[0].backdrop_path || "")}
-          >
-            <Title>{nowPlaying?.results[0].title}</Title>
-            <Overview>{nowPlaying?.results[0].overview}</Overview>
-          </Banner>
-          <SlideWrapper>
-            {nowPlaying ? (
-              <ContentList
-                {...nowPlaying}
-                titleType="현재 상영 중인 영화"
-                type="movie"
-              />
-            ) : (
-              ""
-            )}
-            {topRated ? (
-              <ContentList
-                {...topRated}
-                titleType="가장 인기있는 영화"
-                type="movie"
-              />
-            ) : (
-              ""
-            )}
-            {upcoming ? (
-              <ContentList
-                {...upcoming}
-                titleType="개봉 예정 영화"
-                type="movie"
-              />
-            ) : (
-              ""
-            )}
-          </SlideWrapper>
-        </>
-      )}
-    </Wrapper>
-  );
-}
 export default Home;

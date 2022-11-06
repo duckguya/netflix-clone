@@ -102,6 +102,7 @@ function ContentList({ results, titleType, type }: IProps) {
     <>
       <Container arrow={isArrow}>
         <TitleType>{titleType}</TitleType>
+
         <Slider {...settings}>
           {results &&
             results

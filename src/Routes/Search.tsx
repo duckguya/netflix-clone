@@ -65,7 +65,7 @@ function Search() {
 
       {state === "loading" && (
         <LoadingContainer>
-          <ContentSkeleton />
+          <ContentSkeleton type="search" />
         </LoadingContainer>
       )}
       {state === "ok" && (
@@ -115,9 +115,7 @@ const LoadingContainer = styled.div`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-
   gap: 10px;
-
   padding: 0px 38px;
 `;
 const Space = styled.div`

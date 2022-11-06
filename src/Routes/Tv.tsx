@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 import {
   getTvAiringToday,
@@ -8,6 +8,94 @@ import {
 } from "../api";
 import { makeImagePath } from "../utils/makeImagePath";
 import ContentList from "../Components/ContentList";
+import { ContentSkeleton } from "../Components/ContentSkeleton";
+
+function Tv() {
+  const queryClient = useQueryClient();
+
+  const {
+    data: airingData,
+    isLoading: isLoadingAiring,
+    isError: isErrorAiringToday,
+  } = useQuery<IGetTvResult>(
+    ["tvs", "airing_today"],
+    async () => await getTvAiringToday()
+  );
+  const {
+    data: popularData,
+    isLoading: isLoadingPopular,
+    isError: isErrorPopular,
+  } = useQuery<IGetTvResult>(
+    ["tvs", "popular"],
+    async () => await getTvPopular()
+  );
+  const {
+    data: ratedData,
+    isLoading: isLoadingRatedLoading,
+    isError: isErrorRated,
+  } = useQuery<IGetTvResult>(
+    ["tvs", "top_rated"],
+    async () => await getTvTopRated()
+  );
+
+  let state = "ok";
+  if (isLoadingAiring || isLoadingPopular || isLoadingRatedLoading) {
+    state = "loading";
+  } else if (isErrorAiringToday || isErrorPopular || isErrorRated) {
+    state = "error";
+  }
+  const onRetry = () => {
+    queryClient.refetchQueries(["search"]);
+  };
+
+  return (
+    <Wrapper>
+      {state === "error" && (
+        <div>
+          에러가 발생했습니다. 다시 시도할까요?
+          <button onClick={onRetry}>재시도</button>
+        </div>
+      )}
+      {state === "loading" && (
+        <LoadingContainer>
+          <ContentSkeleton />
+        </LoadingContainer>
+      )}
+      {state === "ok" && (
+        <>
+          <Banner
+            bgPhoto={makeImagePath(airingData?.results[0].backdrop_path || "")}
+          >
+            <Title>{airingData?.results[0].name}</Title>
+            <Overview>
+              {airingData?.results[0].overview &&
+              airingData?.results[0].overview.length > 100
+                ? airingData?.results[0].overview.slice(0, 200) + "..."
+                : airingData?.results[0].overview}
+            </Overview>
+          </Banner>
+          <SlideWrapper>
+            {airingData ? (
+              <ContentList {...airingData} titleType="Airing Today" type="tv" />
+            ) : (
+              ""
+            )}
+            {popularData ? (
+              <ContentList {...popularData} titleType="Popular" type="tv" />
+            ) : (
+              ""
+            )}
+            {ratedData ? (
+              <ContentList {...ratedData} titleType="Top Rated" type="tv" />
+            ) : (
+              ""
+            )}
+          </SlideWrapper>
+        </>
+      )}
+    </Wrapper>
+  );
+}
 
 const Wrapper = styled.div`
   /* background: ${(props) => props.theme.black.veryDark}; */
@@ -40,7 +128,8 @@ const Banner = styled.div<{ bgPhoto: string }>`
 `;
 
 const Title = styled.h2`
-  font-size: 4rem;
+  font-size: 3rem;
+  font-weight: 400;
   margin-bottom: 1rem;
   color: white;
 `;
@@ -61,58 +150,12 @@ const Space = styled.div`
   margin: 5rem 0;
 `;
 
-function Tv() {
-  const { data: airingData, isLoading: airingLoading } = useQuery<IGetTvResult>(
-    ["tvs", "airing_today"],
-    async () => await getTvAiringToday()
-  );
-  const { data: popularData, isLoading: popularLoading } =
-    useQuery<IGetTvResult>(
-      ["tvs", "popular"],
-      async () => await getTvPopular()
-    );
-  const { data: ratedData, isLoading: ratedLoading } = useQuery<IGetTvResult>(
-    ["tvs", "top_rated"],
-    async () => await getTvTopRated()
-  );
+const LoadingContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0px 38px;
+`;
 
-  return (
-    <Wrapper>
-      {airingLoading ? (
-        <Loader>Loading...</Loader>
-      ) : (
-        <>
-          <Banner
-            bgPhoto={makeImagePath(airingData?.results[0].backdrop_path || "")}
-          >
-            <Title>{airingData?.results[0].name}</Title>
-            <Overview>
-              {airingData?.results[0].overview &&
-              airingData?.results[0].overview.length > 100
-                ? airingData?.results[0].overview.slice(0, 300) + "..."
-                : airingData?.results[0].overview}
-            </Overview>
-          </Banner>
-          <SlideWrapper>
-            {airingData ? (
-              <ContentList {...airingData} titleType="Airing Today" type="tv" />
-            ) : (
-              ""
-            )}
-            {popularData ? (
-              <ContentList {...popularData} titleType="Popular" type="tv" />
-            ) : (
-              ""
-            )}
-            {ratedData ? (
-              <ContentList {...ratedData} titleType="Top Rated" type="tv" />
-            ) : (
-              ""
-            )}
-          </SlideWrapper>
-        </>
-      )}
-    </Wrapper>
-  );
-}
 export default Tv;

@@ -2,7 +2,11 @@ import React from "react";
 import Skeleton from "react-loading-skeleton";
 import styled from "styled-components";
 
-const Wrapper = styled.div`
+const SkeletonWrapper = styled.div<{ typeName?: string }>`
+  margin-top: ${(props) => (props.typeName === "search" ? "0" : "650px")};
+`;
+
+const BodySkeleton = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
@@ -17,11 +21,15 @@ const Wrapper = styled.div`
   }
 `;
 
-export const ContentSkeleton = () => {
+interface IProps {
+  type?: string;
+}
+
+export const ContentSkeleton = ({ type }: IProps) => {
   return (
-    <div>
+    <SkeletonWrapper typeName={type}>
       <Skeleton width={100} height={15} style={{ marginBottom: "10px" }} />
-      <Wrapper>
+      <BodySkeleton>
         {[...new Array(15)].map((_, index) => (
           <Skeleton
             className="skeleton_box"
@@ -31,8 +39,8 @@ export const ContentSkeleton = () => {
             // style={{ marginBottom: "10px" }}
           />
         ))}
-      </Wrapper>
+      </BodySkeleton>
       {/* <Skeleton width={256} height={20} style={{ marginBottom: "5px" }} /> */}
-    </div>
+    </SkeletonWrapper>
   );
 };
