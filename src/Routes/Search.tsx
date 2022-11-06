@@ -46,6 +46,8 @@ function Search() {
     state = "error";
   } else if (tvsLoading || moviesLoading) {
     state = "loading";
+  } else if (movies?.results.length === 0) {
+    state = "empty";
   }
 
   const onRetry = () => {
@@ -67,6 +69,11 @@ function Search() {
         <LoadingContainer>
           <ContentSkeleton type="search" />
         </LoadingContainer>
+      )}
+      {state === "empty" && (
+        <div>
+          <p>'{keyword}' 을(를) 찾을 수 없습니다. 다시 검색해주세요.</p>
+        </div>
       )}
       {state === "ok" && (
         <>
