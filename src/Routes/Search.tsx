@@ -62,11 +62,10 @@ function Search() {
           <button onClick={onRetry}>재시도</button>
         </div>
       )}
+
       {state === "loading" && (
         <LoadingContainer>
-          {[...new Array(3)].map((_, index) => (
-            <ContentSkeleton key={index} />
-          ))}
+          <ContentSkeleton />
         </LoadingContainer>
       )}
       {state === "ok" && (
@@ -119,7 +118,7 @@ const LoadingContainer = styled.div`
 
   gap: 10px;
 
-  padding: 0px 100px;
+  padding: 0px 38px;
 `;
 const Space = styled.div`
   margin: 3rem 0;
