@@ -36,43 +36,6 @@ function ContentList({ results, titleType, type }: IProps) {
     navigate(`${type === "movie" ? "/movies/" : "/tv/"}${id}`);
   };
 
-  /*
-  function SampleNextArrow(props: any) {
-    const { className, style, onClick } = props;
-    return (
-      // <div
-      //   className={className}
-      //   style={{ ...style, display: "block", background: "red" }}
-      //   onClick={onClick}
-      // />
-      <div
-        className="material-icons"
-        style={{
-          ...style,
-          display: "block",
-          background: "red",
-          position: "absolute",
-          padding: "0px 20px",
-          // display: 'flex',
-          margin: "auto",
-          alignItems: " center",
-          overflow: "hidden",
-          borderRadius: " 5px",
-          backgroundColor:
-            "linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8))",
-          right: "-23px",
-          height: "9rem",
-          top: "-65px",
-        }}
-        onClick={onClick}
-        // variants={BtnVariants}
-        // whileHover="hover"
-      >
-        arrow_forward_ios
-      </div>
-    );
-  }
- */
   const settings = {
     dots: false,
     infinite: false,
@@ -209,14 +172,15 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
   background-image: url(${(props) => props.bgphoto});
   background-size: cover;
   background-position: center center;
+  transform-origin: center center;
   height: 9rem;
   border-radius: 5px;
   overflow: hidden;
   cursor: pointer;
-  &:first-child {
+  &:first-child::before {
     transform-origin: left center;
   }
-  &:last-child {
+  &:last-child::before {
     transform-origin: right center;
   }
 `;

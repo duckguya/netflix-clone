@@ -149,7 +149,8 @@ function ContentDetail({ data, type, category, keyword }: IProps) {
                           }}
                         />
                       ))}
-                    {tvVideos &&
+                    {!movieVideos &&
+                      tvVideos &&
                       (tvVideos?.results.length > 0 ? (
                         <Player videos={tvVideos} />
                       ) : (
@@ -177,7 +178,7 @@ function ContentDetail({ data, type, category, keyword }: IProps) {
                               </p>
                             )}
                             {type === "movie" ? <p> {data.runtime} 분</p> : ""}
-                            <StarRate rate={data.vote_average} />
+                            <StarRate rate={data.vote_average} data={data} />
                             {String(data.vote_average).slice(0, 3)}
                           </Detail>
                           <OverView>

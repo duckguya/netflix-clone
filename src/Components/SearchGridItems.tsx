@@ -14,6 +14,7 @@ import { IMovie, getMovieDetail, IContent, IGetMovieDetail } from "../api";
 import { makeImagePath } from "../utils/makeImagePath";
 import { useDetailMovie } from "../Query/Queries";
 import ContentDetail from "./ContentDetail";
+import StarRate from "./StarRate";
 
 interface IProps {
   type: string;
@@ -33,19 +34,29 @@ const SearchGridItems = ({ type, results, onBoxClicked }: IProps) => {
               .slice(1)
               // .slice(offset * index, offset * index + offset)
               .filter((m) => m.backdrop_path)
-              .map((movie) => (
+              .map((content) => (
                 <Box
-                  layoutId={movie.id + ""}
-                  key={movie.id}
+                  layoutId={content.id + ""}
+                  key={content.id}
                   variants={BoxVariants}
                   initial="normal"
                   whileHover="hover"
                   transition={{ type: "tween" }}
-                  bgphoto={makeImagePath(movie.backdrop_path, "w500")}
-                  onClick={() => onBoxClicked(movie.id)}
+                  bgphoto={makeImagePath(content.backdrop_path, "w500")}
+                  onClick={() => onBoxClicked(content.id)}
                 >
                   <Info variants={InfoVariants}>
-                    <h4>{movie.name}</h4>
+                    {/* <h4>{content.name}</h4> */}
+                    <h4>{type === "movie" ? content.title : content.name}</h4>
+                    <InfoWrapper>
+                      <div>
+                        <StarRate rate={content.vote_average} />
+                        <span>{String(content.vote_average).slice(0, 3)}</span>
+                      </div>
+                      <MoreBtn className="material-icons">
+                        expand_circle_down
+                      </MoreBtn>
+                    </InfoWrapper>
                   </Info>
                 </Box>
 
@@ -134,18 +145,33 @@ const Box = styled(motion.div)<{ bgphoto: string }>`
 
 const Info = styled(motion.div)`
   padding: 10px;
-  background-color: ${(props) => props.theme.black.lighter};
+  background-color: ${(props) => props.theme.black.darker};
   opacity: 0;
   position: absolute;
-  /* width: 100%; */
-  bottom: 0;
   width: 100%;
+  bottom: 0;
   h4 {
-    text-align: center;
-    font-size: 18px;
+    text-align: left;
+    font-size: 1rem;
   }
 `;
 
+const InfoWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  div {
+    display: flex;
+  }
+`;
+const MoreBtn = styled.div`
+  padding-left: 3.5rem;
+
+  &:hover {
+    color: ${(props) => props.theme.black.lighter};
+  }
+`;
 const Overlay = styled(motion.div)`
   position: fixed;
   top: 0;
