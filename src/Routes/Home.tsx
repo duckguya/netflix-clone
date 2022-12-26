@@ -11,6 +11,7 @@ import ContentList from "../Components/ContentList";
 import { ContentSkeleton } from "../Components/ContentSkeleton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { Helmet } from "react-helmet-async";
 
 function Home() {
   const queryClient = useQueryClient();
@@ -49,65 +50,72 @@ function Home() {
   };
 
   return (
-    <Wrapper state={state}>
-      {state === "error" && (
-        <Error>
-          <FontAwesomeIcon icon={faCircleExclamation} size="10x" />
-          <p>에러가 발생했습니다. 다시 시도할까요?</p>
-          <button onClick={onRetry}>재시도</button>
-        </Error>
-      )}
-      {state === "loading" && (
-        <LoadingContainer>
-          <ContentSkeleton />
-        </LoadingContainer>
-      )}
+    <>
+      <Helmet>
+        <title>movies</title>
+      </Helmet>
+      <Wrapper state={state}>
+        {state === "error" && (
+          <Error>
+            <FontAwesomeIcon icon={faCircleExclamation} size="10x" />
+            <p>에러가 발생했습니다. 다시 시도할까요?</p>
+            <button onClick={onRetry}>재시도</button>
+          </Error>
+        )}
+        {state === "loading" && (
+          <LoadingContainer>
+            <ContentSkeleton />
+          </LoadingContainer>
+        )}
 
-      {state === "ok" && (
-        <>
-          <Banner
-            bgPhoto={makeImagePath(nowPlaying?.results[0].backdrop_path || "")}
-          >
-            <Title>{nowPlaying?.results[0].title}</Title>
-            <Overview>
-              {nowPlaying?.results[0].overview &&
-              nowPlaying?.results[0].overview.length > 100
-                ? nowPlaying.results[0].overview.slice(0, 200) + "..."
-                : nowPlaying?.results[0].overview}
-            </Overview>
-          </Banner>
-          <SlideWrapper>
-            {nowPlaying ? (
-              <ContentList
-                {...nowPlaying}
-                titleType="현재 상영 중인 영화"
-                type="movie"
-              />
-            ) : (
-              ""
-            )}
-            {topRated ? (
-              <ContentList
-                {...topRated}
-                titleType="가장 인기있는 영화"
-                type="movie"
-              />
-            ) : (
-              ""
-            )}
-            {upcoming ? (
-              <ContentList
-                {...upcoming}
-                titleType="개봉 예정 영화"
-                type="movie"
-              />
-            ) : (
-              ""
-            )}
-          </SlideWrapper>
-        </>
-      )}
-    </Wrapper>
+        {state === "ok" && (
+          <>
+            <Banner
+              bgPhoto={makeImagePath(
+                nowPlaying?.results[0].backdrop_path || ""
+              )}
+            >
+              <Title>{nowPlaying?.results[0].title}</Title>
+              <Overview>
+                {nowPlaying?.results[0].overview &&
+                nowPlaying?.results[0].overview.length > 100
+                  ? nowPlaying.results[0].overview.slice(0, 200) + "..."
+                  : nowPlaying?.results[0].overview}
+              </Overview>
+            </Banner>
+            <SlideWrapper>
+              {nowPlaying ? (
+                <ContentList
+                  {...nowPlaying}
+                  titleType="현재 상영 중인 영화"
+                  type="movie"
+                />
+              ) : (
+                ""
+              )}
+              {topRated ? (
+                <ContentList
+                  {...topRated}
+                  titleType="가장 인기있는 영화"
+                  type="movie"
+                />
+              ) : (
+                ""
+              )}
+              {upcoming ? (
+                <ContentList
+                  {...upcoming}
+                  titleType="개봉 예정 영화"
+                  type="movie"
+                />
+              ) : (
+                ""
+              )}
+            </SlideWrapper>
+          </>
+        )}
+      </Wrapper>
+    </>
   );
 }
 

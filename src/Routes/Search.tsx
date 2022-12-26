@@ -11,6 +11,7 @@ import { ContentSkeleton } from "../Components/ContentSkeleton";
 import SearchContents from "../Components/SearchContents";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { Helmet } from "react-helmet-async";
 
 /*
 const useMe = () => {
@@ -57,47 +58,52 @@ function Search() {
   };
 
   return (
-    <Wrapper>
-      <TitleType>'{keyword}'</TitleType>
+    <>
+      <Helmet>
+        <title>search</title>
+      </Helmet>
+      <Wrapper>
+        <TitleType>'{keyword}'</TitleType>
 
-      {state === "error" && (
-        <Error>
-          <FontAwesomeIcon icon={faCircleExclamation} size="10x" />
-          <p>에러가 발생했습니다. 다시 시도할까요?</p>
-          <button onClick={onRetry}>재시도</button>
-        </Error>
-      )}
+        {state === "error" && (
+          <Error>
+            <FontAwesomeIcon icon={faCircleExclamation} size="10x" />
+            <p>에러가 발생했습니다. 다시 시도할까요?</p>
+            <button onClick={onRetry}>재시도</button>
+          </Error>
+        )}
 
-      {state === "loading" && (
-        <LoadingContainer>
-          <ContentSkeleton type="search" />
-        </LoadingContainer>
-      )}
-      {state === "empty" && (
-        <div>
-          <p>'{keyword}' 을(를) 찾을 수 없습니다. 다시 검색해주세요.</p>
-        </div>
-      )}
-      {state === "ok" && (
-        <>
-          {movies ? (
-            <SearchContents
-              {...movies}
-              type={"movie"}
-              keyword={keyword || ""}
-            />
-          ) : (
-            ""
-          )}
-          <Space />
-          {tvs ? (
-            <SearchContents {...tvs} type={"tv"} keyword={keyword || ""} />
-          ) : (
-            ""
-          )}
-        </>
-      )}
-    </Wrapper>
+        {state === "loading" && (
+          <LoadingContainer>
+            <ContentSkeleton type="search" />
+          </LoadingContainer>
+        )}
+        {state === "empty" && (
+          <div>
+            <p>'{keyword}' 을(를) 찾을 수 없습니다. 다시 검색해주세요.</p>
+          </div>
+        )}
+        {state === "ok" && (
+          <>
+            {movies ? (
+              <SearchContents
+                {...movies}
+                type={"movie"}
+                keyword={keyword || ""}
+              />
+            ) : (
+              ""
+            )}
+            <Space />
+            {tvs ? (
+              <SearchContents {...tvs} type={"tv"} keyword={keyword || ""} />
+            ) : (
+              ""
+            )}
+          </>
+        )}
+      </Wrapper>
+    </>
   );
 }
 

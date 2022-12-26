@@ -172,7 +172,7 @@ function Header() {
         <Items>
           <Item>
             <Link to="/">
-              Home{" "}
+              Moives{" "}
               {homeMatch || homeMatch2 ? <Circle layoutId="circle" /> : null}
             </Link>
           </Item>

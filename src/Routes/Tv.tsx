@@ -11,6 +11,7 @@ import ContentList from "../Components/ContentList";
 import { ContentSkeleton } from "../Components/ContentSkeleton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { Helmet } from "react-helmet-async";
 
 function Tv() {
   const queryClient = useQueryClient();
@@ -51,52 +52,63 @@ function Tv() {
   };
 
   return (
-    <Wrapper state={state}>
-      {state === "error" && (
-        <Error>
-          <FontAwesomeIcon icon={faCircleExclamation} size="10x" />
-          <p>에러가 발생했습니다. 다시 시도할까요?</p>
-          <button onClick={onRetry}>재시도</button>
-        </Error>
-      )}
-      {state === "loading" && (
-        <LoadingContainer>
-          <ContentSkeleton />
-        </LoadingContainer>
-      )}
-      {state === "ok" && (
-        <>
-          <Banner
-            bgPhoto={makeImagePath(airingData?.results[0].backdrop_path || "")}
-          >
-            <Title>{airingData?.results[0].name}</Title>
-            <Overview>
-              {airingData?.results[0].overview &&
-              airingData?.results[0].overview.length > 100
-                ? airingData?.results[0].overview.slice(0, 200) + "..."
-                : airingData?.results[0].overview}
-            </Overview>
-          </Banner>
-          <SlideWrapper>
-            {airingData ? (
-              <ContentList {...airingData} titleType="Airing Today" type="tv" />
-            ) : (
-              ""
-            )}
-            {popularData ? (
-              <ContentList {...popularData} titleType="Popular" type="tv" />
-            ) : (
-              ""
-            )}
-            {ratedData ? (
-              <ContentList {...ratedData} titleType="Top Rated" type="tv" />
-            ) : (
-              ""
-            )}
-          </SlideWrapper>
-        </>
-      )}
-    </Wrapper>
+    <>
+      <Helmet>
+        <title>tv-shows</title>
+      </Helmet>
+      <Wrapper state={state}>
+        {state === "error" && (
+          <Error>
+            <FontAwesomeIcon icon={faCircleExclamation} size="10x" />
+            <p>에러가 발생했습니다. 다시 시도할까요?</p>
+            <button onClick={onRetry}>재시도</button>
+          </Error>
+        )}
+        {state === "loading" && (
+          <LoadingContainer>
+            <ContentSkeleton />
+          </LoadingContainer>
+        )}
+        {state === "ok" && (
+          <>
+            <Banner
+              bgPhoto={makeImagePath(
+                airingData?.results[0].backdrop_path || ""
+              )}
+            >
+              <Title>{airingData?.results[0].name}</Title>
+              <Overview>
+                {airingData?.results[0].overview &&
+                airingData?.results[0].overview.length > 100
+                  ? airingData?.results[0].overview.slice(0, 200) + "..."
+                  : airingData?.results[0].overview}
+              </Overview>
+            </Banner>
+            <SlideWrapper>
+              {airingData ? (
+                <ContentList
+                  {...airingData}
+                  titleType="Airing Today"
+                  type="tv"
+                />
+              ) : (
+                ""
+              )}
+              {popularData ? (
+                <ContentList {...popularData} titleType="Popular" type="tv" />
+              ) : (
+                ""
+              )}
+              {ratedData ? (
+                <ContentList {...ratedData} titleType="Top Rated" type="tv" />
+              ) : (
+                ""
+              )}
+            </SlideWrapper>
+          </>
+        )}
+      </Wrapper>
+    </>
   );
 }
 
