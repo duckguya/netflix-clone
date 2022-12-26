@@ -18,7 +18,7 @@ interface IProps {
   rate: number;
   data?: IGetMovieDetail;
 }
-function StarRate({ rate, data }: IProps) {
+function StarRate({ rate }: IProps) {
   const AVR_RATE = rate;
   const STAR_IDX_ARR = ["first", "second", "third", "fourth", "last"];
   const [ratesResArr, setRatesResArr] = useState([0, 0, 0, 0, 0]);
@@ -36,7 +36,7 @@ function StarRate({ rate, data }: IProps) {
   };
   useEffect(() => {
     setRatesResArr(calcStarRates);
-  }, []);
+  }, [rate]);
   return (
     <>
       <StarRateWrap>

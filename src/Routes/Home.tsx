@@ -9,6 +9,8 @@ import {
 import { makeImagePath } from "../utils/makeImagePath";
 import ContentList from "../Components/ContentList";
 import { ContentSkeleton } from "../Components/ContentSkeleton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 
 function Home() {
   const queryClient = useQueryClient();
@@ -47,12 +49,13 @@ function Home() {
   };
 
   return (
-    <Wrapper>
+    <Wrapper state={state}>
       {state === "error" && (
-        <div>
-          에러가 발생했습니다. 다시 시도할까요?
+        <Error>
+          <FontAwesomeIcon icon={faCircleExclamation} size="10x" />
+          <p>에러가 발생했습니다. 다시 시도할까요?</p>
           <button onClick={onRetry}>재시도</button>
-        </div>
+        </Error>
       )}
       {state === "loading" && (
         <LoadingContainer>
@@ -108,9 +111,14 @@ function Home() {
   );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ state: string }>`
   /* background: ${(props) => props.theme.black.veryDark}; */
   background: ${(props) => props.theme.black.veryDark};
+  height: ${(props) => (props.state === "error" ? "100vh" : 0)};
+  display: ${(props) => (props.state === "error" ? "flex" : "block")};
+  justify-content: ${(props) => (props.state === "error" ? "center" : "none")};
+  align-items: ${(props) => (props.state === "error" ? "center" : "none")};
+  text-align: ${(props) => (props.state === "error" ? "center" : "none")};
 `;
 
 const Loader = styled.div`
@@ -168,6 +176,32 @@ const LoadingContainer = styled.div`
   flex-wrap: wrap;
   gap: 10px;
   padding: 0px 38px;
+`;
+
+const Error = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  p {
+    /* font-size: 20px; */
+    margin: 30px;
+  }
+  button {
+    border-radius: 10px;
+    border: 1px solid white;
+    color: white;
+    padding: 5px 10px;
+    background-color: transparent;
+    cursor: pointer;
+    &:hover {
+      color: tomato;
+      border: 1px solid tomato;
+    }
+    &:active {
+      color: gray;
+      border: 1px solid gray;
+    }
+  }
 `;
 
 export default Home;

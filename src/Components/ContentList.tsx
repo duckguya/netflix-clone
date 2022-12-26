@@ -86,10 +86,8 @@ function ContentList({ results, titleType, type }: IProps) {
                   <Info variants={InfoVariants}>
                     <h4>{type === "movie" ? content.title : content.name}</h4>
                     <InfoWrapper>
-                      <div>
-                        <StarRate rate={content.vote_average} />
-                        <span>{String(content.vote_average).slice(0, 3)}</span>
-                      </div>
+                      <StarRate rate={content.vote_average} />
+                      <span>{String(content.vote_average).slice(0, 3)}</span>
                       <MoreBtn className="material-icons">
                         expand_circle_down
                       </MoreBtn>

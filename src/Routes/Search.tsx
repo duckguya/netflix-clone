@@ -9,6 +9,8 @@ import {
 } from "../api";
 import { ContentSkeleton } from "../Components/ContentSkeleton";
 import SearchContents from "../Components/SearchContents";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 
 /*
 const useMe = () => {
@@ -59,10 +61,11 @@ function Search() {
       <TitleType>'{keyword}'</TitleType>
 
       {state === "error" && (
-        <div>
-          에러가 발생했습니다. 다시 시도할까요?
+        <Error>
+          <FontAwesomeIcon icon={faCircleExclamation} size="10x" />
+          <p>에러가 발생했습니다. 다시 시도할까요?</p>
           <button onClick={onRetry}>재시도</button>
-        </div>
+        </Error>
       )}
 
       {state === "loading" && (
@@ -128,5 +131,29 @@ const LoadingContainer = styled.div`
 const Space = styled.div`
   margin: 3rem 0;
 `;
-
+const Error = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  p {
+    /* font-size: 20px; */
+    margin: 30px;
+  }
+  button {
+    border-radius: 10px;
+    border: 1px solid white;
+    color: white;
+    padding: 5px 10px;
+    background-color: transparent;
+    cursor: pointer;
+    &:hover {
+      color: tomato;
+      border: 1px solid tomato;
+    }
+    &:active {
+      color: gray;
+      border: 1px solid gray;
+    }
+  }
+`;
 export default Search;
