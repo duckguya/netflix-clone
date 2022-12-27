@@ -44,7 +44,7 @@ function Search() {
     getTvSearch(keyword || "")
   );
 
-  let state = "loading";
+  let state = "ok";
   if (isErrorTv || isErrorMovie) {
     state = "error";
   } else if (tvsLoading || moviesLoading) {
