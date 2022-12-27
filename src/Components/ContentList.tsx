@@ -69,7 +69,7 @@ function ContentList({ results, titleType, type }: IProps) {
         <Slider {...settings}>
           {results &&
             results
-              .slice(1)
+              // .slice(7)
               // .slice(offset * index, offset * index + offset)
               .map((content) => (
                 <Box

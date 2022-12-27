@@ -72,35 +72,41 @@ function Tv() {
         {state === "ok" && (
           <>
             <Banner
-              bgPhoto={makeImagePath(
-                airingData?.results[0].backdrop_path || ""
-              )}
+              bgPhoto={makeImagePath(ratedData?.results[0].backdrop_path || "")}
             >
-              <Title>{airingData?.results[0].name}</Title>
+              <Title>{ratedData?.results[0].name}</Title>
               <Overview>
-                {airingData?.results[0].overview &&
-                airingData?.results[0].overview.length > 100
-                  ? airingData?.results[0].overview.slice(0, 200) + "..."
-                  : airingData?.results[0].overview}
+                {ratedData?.results[0].overview &&
+                ratedData?.results[0].overview.length > 100
+                  ? ratedData?.results[0].overview.slice(0, 200) + "..."
+                  : ratedData?.results[0].overview}
               </Overview>
             </Banner>
             <SlideWrapper>
               {airingData ? (
                 <ContentList
                   {...airingData}
-                  titleType="Airing Today"
+                  titleType="방영 중인 TV 프로그램"
                   type="tv"
                 />
               ) : (
                 ""
               )}
               {popularData ? (
-                <ContentList {...popularData} titleType="Popular" type="tv" />
+                <ContentList
+                  {...popularData}
+                  titleType="인기있는 TV 프로그램"
+                  type="tv"
+                />
               ) : (
                 ""
               )}
               {ratedData ? (
-                <ContentList {...ratedData} titleType="Top Rated" type="tv" />
+                <ContentList
+                  {...ratedData}
+                  titleType="최고 시청률을 기록한 TV 프로그램"
+                  type="tv"
+                />
               ) : (
                 ""
               )}

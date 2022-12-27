@@ -148,37 +148,51 @@ export async function getNowPlaying() {
   const response = await axios.get(
     `${BASE_PATH}/movie/now_playing?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
   );
-
   return response.data;
 }
 
-export function getUpcoming() {
-  return fetch(
+export async function getUpcoming() {
+  const response = await axios.get(
     `${BASE_PATH}/movie/upcoming?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
-  ).then((response) => response.json());
+  );
+  return response.data;
 }
 
-export function getTopRated() {
-  return fetch(
+export async function getTopRated() {
+  const response = await axios.get(
     `${BASE_PATH}/movie/top_rated?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
-  ).then((response) => response.json());
+  );
+  return response.data;
 }
 
 // tv list
-export function getTvAiringToday() {
-  return fetch(
+export async function getTvAiringToday() {
+  const response = await axios.get(
     `${BASE_PATH}/tv/airing_today?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
-  ).then((response) => response.json());
+  );
+
+  return {
+    ...response.data,
+    results: response.data.results.filter((d: any) => d.backdrop_path !== null),
+  };
 }
-export function getTvPopular() {
-  return fetch(
+export async function getTvPopular() {
+  const response = await axios.get(
     `${BASE_PATH}/tv/popular?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
-  ).then((response) => response.json());
+  );
+  return {
+    ...response.data,
+    results: response.data.results.filter((d: any) => d.backdrop_path !== null),
+  };
 }
-export function getTvTopRated() {
-  return fetch(
+export async function getTvTopRated() {
+  const response = await axios.get(
     `${BASE_PATH}/tv/top_rated?api_key=${process.env.REACT_APP_API_KEY}&language=ko-KR`
-  ).then((response) => response.json());
+  );
+  return {
+    ...response.data,
+    results: response.data.results.filter((d: any) => d.backdrop_path !== null),
+  };
 }
 
 // search
@@ -195,10 +209,11 @@ export async function getMovieSearch(keyowrd: string) {
     })),
   };
 }
-export function getTvSearch(keyowrd: string) {
-  return fetch(
+export async function getTvSearch(keyowrd: string) {
+  const response = await axios.get(
     `${BASE_PATH}/search/tv?api_key=${process.env.REACT_APP_API_KEY}&query=${keyowrd}&language=ko-KR`
-  ).then((response) => response.json());
+  );
+  return response.data;
 }
 
 // detail

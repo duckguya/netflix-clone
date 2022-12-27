@@ -29,6 +29,7 @@ function Home() {
     ["movies", "up_coming"],
     async () => await getUpcoming()
   );
+
   const {
     data: topRated,
     isLoading: isLoadingTopRated,
