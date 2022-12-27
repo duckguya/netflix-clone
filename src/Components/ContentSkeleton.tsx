@@ -20,6 +20,12 @@ const BodySkeleton = styled.div`
     }
   }
 `;
+const TopSkeloton = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 45px;
+`;
 
 interface IProps {
   type?: string;
@@ -28,6 +34,11 @@ interface IProps {
 export const ContentSkeleton = ({ type }: IProps) => {
   return (
     <SkeletonWrapper typeName={type}>
+      {type === "search" && (
+        <TopSkeloton>
+          <Skeleton width={200} height={40} />
+        </TopSkeloton>
+      )}
       <Skeleton width={100} height={15} style={{ marginBottom: "10px" }} />
       <BodySkeleton>
         {[...new Array(15)].map((_, index) => (

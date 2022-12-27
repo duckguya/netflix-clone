@@ -5,87 +5,6 @@ import { Link, useMatch, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-const Nav = styled(motion.nav)`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: fixed;
-  width: 100%;
-  top: 0;
-  font-size: 12px;
-  padding: 20px 60px;
-  color: white;
-  z-index: 99;
-`;
-
-const Col = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const Logo = styled(motion.svg)`
-  margin-right: 50px;
-  width: 95px;
-  height: 25px;
-  fill: ${(props) => props.theme.red};
-  cursor: pointer;
-  path {
-    stroke-width: 6px;
-    stroke: white;
-  }
-`;
-
-const Items = styled.ul`
-  display: flex;
-  align-items: center;
-`;
-const Item = styled.li`
-  margin-right: 20px;
-  color: ${(props) => props.theme.white.darker};
-  transition: color 0.3s ease-in-out;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  &:hover {
-    color: ${(props) => props.theme.white.lighter};
-  }
-`;
-const Search = styled.form`
-  color: white;
-  display: flex;
-  align-items: center;
-  position: relative;
-  cursor: pointer;
-  svg {
-    height: 25px;
-  }
-`;
-const Circle = styled(motion.span)`
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 5px;
-  bottom: -5px;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  background-color: ${(props) => props.theme.red};
-`;
-
-const Input = styled(motion.input)`
-  transform-origin: right center;
-  position: absolute;
-  right: 0px;
-  padding: 5px 10px;
-  padding-left: 40px;
-  z-index: -1;
-  color: white;
-  font-size: 16px;
-  background-color: transparent;
-  border: 1px solid ${(props) => props.theme.white.lighter};
-`;
-
 const logoVariants = {
   normal: {
     fillOpacity: 1,
@@ -172,7 +91,7 @@ function Header() {
         <Items>
           <Item>
             <Link to="/">
-              Moives{" "}
+              Moive{" "}
               {homeMatch || homeMatch2 ? <Circle layoutId="circle" /> : null}
             </Link>
           </Item>
@@ -205,11 +124,92 @@ function Header() {
             initial={{ scaleX: 0 }}
             transition={{ type: "linear" }}
             // animate={{ scaleX: searchOpen ? 1 : 0 }}
-            placeholder="Search for movie or tv show..."
+            placeholder="Search for movie or tv show"
           />
         </Search>
       </Col>
     </Nav>
   );
 }
+
+const Nav = styled(motion.nav)`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  font-size: 12px;
+  padding: 20px 60px;
+  color: white;
+  z-index: 99;
+`;
+
+const Col = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const Logo = styled(motion.svg)`
+  margin-right: 50px;
+  width: 95px;
+  height: 25px;
+  fill: ${(props) => props.theme.red};
+  cursor: pointer;
+  path {
+    stroke-width: 6px;
+    stroke: white;
+  }
+`;
+
+const Items = styled.ul`
+  display: flex;
+  align-items: center;
+`;
+const Item = styled.li`
+  margin-right: 20px;
+  color: ${(props) => props.theme.white.darker};
+  transition: color 0.3s ease-in-out;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  &:hover {
+    color: ${(props) => props.theme.white.lighter};
+  }
+`;
+const Search = styled.form`
+  color: white;
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  svg {
+    height: 25px;
+  }
+`;
+const Circle = styled(motion.span)`
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 5px;
+  bottom: -5px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  background-color: ${(props) => props.theme.red};
+`;
+
+const Input = styled(motion.input)`
+  transform-origin: right center;
+  position: absolute;
+  right: 0px;
+  padding: 5px 10px;
+  padding-left: 40px;
+  z-index: -1;
+  color: white;
+  font-size: 16px;
+  background-color: transparent;
+  border: 1px solid ${(props) => props.theme.white.lighter};
+`;
 export default Header;

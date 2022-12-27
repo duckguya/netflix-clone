@@ -44,7 +44,7 @@ function Search() {
     getTvSearch(keyword || "")
   );
 
-  let state = "ok";
+  let state = "loading";
   if (isErrorTv || isErrorMovie) {
     state = "error";
   } else if (tvsLoading || moviesLoading) {
@@ -63,7 +63,7 @@ function Search() {
         <title>search</title>
       </Helmet>
       <Wrapper>
-        <TitleType>'{keyword}'</TitleType>
+        {/* <TitleType>'{keyword}'</TitleType> */}
 
         {state === "error" && (
           <Error>
@@ -85,6 +85,7 @@ function Search() {
         )}
         {state === "ok" && (
           <>
+            <TitleType>'{keyword}'</TitleType>
             {movies ? (
               <SearchContents
                 {...movies}
